@@ -1,4 +1,4 @@
-package bigip
+package bigiq
 
 import (
 	"net/http"
@@ -12,7 +12,7 @@ import (
 
 type NetTestSuite struct {
 	suite.Suite
-	Client          *BigIP
+	Client          *BigIQ
 	Server          *httptest.Server
 	LastRequest     *http.Request
 	LastRequestBody string

@@ -1,10 +1,14 @@
-package bigip
+package bigiq
 
 import (
+	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -15,12 +19,13 @@ const (
 	uriLicenses    = "licenses"
 	uriResolver    = "resolver"
 	uriDevicegroup = "device-groups"
-	uriCmBigip     = "cm-bigip-allBigIpDevices"
+	uriCmBigIQ     = "cm-bigip-allBigIpDevices"
 	uriDevice      = "device"
 	uriMembers     = "members"
 	uriTasks       = "tasks"
 	uriManagement  = "member-management"
 	uriPurchased   = "purchased-pool"
+	uriPool        = "pool"
 )
 
 var tenantProperties []string = []string{"class", "constants", "controls", "defaultRouteDomain", "enable", "label", "optimisticLockKey", "remark"}
@@ -32,9 +37,66 @@ type BigiqDevice struct {
 	Port     int    `json:"port,omitempty"`
 }
 
+var defaultConfigOptions = &ConfigOptions{
+	APICallTimeout: 60 * time.Second,
+}
+
+type ConfigOptions struct {
+	APICallTimeout time.Duration
+}
+
+// BigIQ is a container for our session state.
+type BigIQ struct {
+	Host      string
+	User      string
+	Password  string
+	Token     string // if set, will be used instead of User/Password
+	Transport *http.Transport
+	// UserAgent is an optional field that specifies the caller of this request.
+	UserAgent     string
+	Teem          bool
+	ConfigOptions *ConfigOptions
+}
+
+// APIRequest builds our request before sending it to the server.
+type APIRequest struct {
+	Method      string
+	URL         string
+	Body        string
+	ContentType string
+}
+
+// Upload contains information about a file upload status
+type Upload struct {
+	RemainingByteCount int64          `json:"remainingByteCount"`
+	UsedChunks         map[string]int `json:"usedChunks"`
+	TotalByteCount     int64          `json:"totalByteCount"`
+	LocalFilePath      string         `json:"localFilePath"`
+	TemporaryFilePath  string         `json:"temporaryFilePath"`
+	Generation         int            `json:"generation"`
+	LastUpdateMicros   int            `json:"lastUpdateMicros"`
+}
+
+// RequestError contains information about any error we get from a request.
+type RequestError struct {
+	Code       int      `json:"code,omitempty"`
+	Message    string   `json:"message,omitempty"`
+	ErrorStack []string `json:"errorStack,omitempty"`
+}
+
+// Error returns the error message.
+func (r *RequestError) Error() error {
+	if r.Message != "" {
+		return errors.New(r.Message)
+	}
+
+	return nil
+}
+
 type DeviceRef struct {
 	Link string `json:"link"`
 }
+
 type ManagedDevice struct {
 	DeviceReference DeviceRef `json:"deviceReference"`
 }
@@ -137,8 +199,8 @@ type BigiqResults struct {
 	RunTime int64  `json:"runTime,omitempty"`
 }
 
-func (b *BigIP) PostLicense(config *LicenseParam) (string, error) {
-	log.Printf("[INFO] %v license to BIGIP device:%v from BIGIQ", config.Command, config.Address)
+func (b *BigIQ) PostLicense(config *LicenseParam) (string, error) {
+	log.Printf("[INFO] %v license to BigIQ device:%v from BIGIQ", config.Command, config.Address)
 	resp, err := b.postReq(config, uriMgmt, uriCm, uriDevice, uriTasks, uriLicensing, uriPool, uriManagement)
 	if err != nil {
 		return "", err
@@ -149,7 +211,7 @@ func (b *BigIP) PostLicense(config *LicenseParam) (string, error) {
 	time.Sleep(5 * time.Second)
 	return respID, nil
 }
-func (b *BigIP) GetLicenseStatus(id string) (map[string]interface{}, error) {
+func (b *BigIQ) GetLicenseStatus(id string) (map[string]interface{}, error) {
 	licRes := make(map[string]interface{})
 	err, _ := b.getForEntity(&licRes, uriMgmt, uriCm, uriDevice, uriTasks, uriLicensing, uriPool, uriManagement, id)
 	if err != nil {
@@ -173,7 +235,7 @@ func (b *BigIP) GetLicenseStatus(id string) (map[string]interface{}, error) {
 	return licRes, nil
 }
 
-func (b *BigIP) GetDeviceLicenseStatus(path ...string) (string, error) {
+func (b *BigIQ) GetDeviceLicenseStatus(path ...string) (string, error) {
 	licRes := make(map[string]interface{})
 	err, _ := b.getForEntity(&licRes, path...)
 	if err != nil {
@@ -182,7 +244,7 @@ func (b *BigIP) GetDeviceLicenseStatus(path ...string) (string, error) {
 	//log.Printf(" Initial status response is :%s", licRes["status"])
 	return licRes["status"].(string), nil
 }
-func (b *BigIP) GetRegPools() (*regKeyPools, error) {
+func (b *BigIQ) GetRegPools() (*regKeyPools, error) {
 	var self regKeyPools
 	err, _ := b.getForEntity(&self, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses)
 	if err != nil {
@@ -191,7 +253,7 @@ func (b *BigIP) GetRegPools() (*regKeyPools, error) {
 	return &self, nil
 }
 
-func (b *BigIP) GetPoolType(poolName string) (*regKeyPool, error) {
+func (b *BigIQ) GetPoolType(poolName string) (*regKeyPool, error) {
 	var self regKeyPools
 	err, _ := b.getForEntity(&self, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses)
 	if err != nil {
@@ -223,18 +285,18 @@ func (b *BigIP) GetPoolType(poolName string) (*regKeyPool, error) {
 	return nil, nil
 }
 
-func (b *BigIP) GetManagedDevices() (*devicesList, error) {
+func (b *BigIQ) GetManagedDevices() (*devicesList, error) {
 	var self devicesList
-	err, _ := b.getForEntity(&self, uriMgmt, uriShared, uriResolver, uriDevicegroup, uriCmBigip, uriDevices)
+	err, _ := b.getForEntity(&self, uriMgmt, uriShared, uriResolver, uriDevicegroup, uriCmBigIQ, uriDevices)
 	if err != nil {
 		return nil, err
 	}
 	return &self, nil
 }
 
-func (b *BigIP) GetDeviceId(deviceName string) (string, error) {
+func (b *BigIQ) GetDeviceId(deviceName string) (string, error) {
 	var self devicesList
-	err, _ := b.getForEntity(&self, uriMgmt, uriShared, uriResolver, uriDevicegroup, uriCmBigip, uriDevices)
+	err, _ := b.getForEntity(&self, uriMgmt, uriShared, uriResolver, uriDevicegroup, uriCmBigIQ, uriDevices)
 	if err != nil {
 		return "", err
 	}
@@ -248,7 +310,7 @@ func (b *BigIP) GetDeviceId(deviceName string) (string, error) {
 	return "", nil
 }
 
-func (b *BigIP) GetRegkeyPoolId(poolName string) (string, error) {
+func (b *BigIQ) GetRegkeyPoolId(poolName string) (string, error) {
 	var self regKeyPools
 	err, _ := b.getForEntity(&self, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses)
 	if err != nil {
@@ -262,7 +324,7 @@ func (b *BigIP) GetRegkeyPoolId(poolName string) (string, error) {
 	return "", nil
 }
 
-func (b *BigIP) RegkeylicenseAssign(config interface{}, poolId string, regKey string) (*memberDetail, error) {
+func (b *BigIQ) RegkeylicenseAssign(config interface{}, poolId string, regKey string) (*memberDetail, error) {
 	resp, err := b.postReq(config, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses, poolId, uriOfferings, regKey, uriMembers)
 	if err != nil {
 		return nil, err
@@ -275,7 +337,7 @@ func (b *BigIP) RegkeylicenseAssign(config interface{}, poolId string, regKey st
 	return b.GetMemberStatus(poolId, regKey, resp1.ID)
 }
 
-func (b *BigIP) GetMemberStatus(poolId, regKey, memId string) (*memberDetail, error) {
+func (b *BigIQ) GetMemberStatus(poolId, regKey, memId string) (*memberDetail, error) {
 	var self memberDetail
 	err, _ := b.getForEntity(&self, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses, poolId, uriOfferings, regKey, uriMembers, memId)
 	if err != nil {
@@ -290,7 +352,7 @@ func (b *BigIP) GetMemberStatus(poolId, regKey, memId string) (*memberDetail, er
 	}
 	return &self, nil
 }
-func (b *BigIP) RegkeylicenseRevoke(poolId, regKey, memId string) error {
+func (b *BigIQ) RegkeylicenseRevoke(poolId, regKey, memId string) error {
 	log.Printf("Deleting License for Member:%+v", memId)
 	_, err := b.deleteReq(uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses, poolId, uriOfferings, regKey, uriMembers, memId)
 	if err != nil {
@@ -304,7 +366,7 @@ func (b *BigIP) RegkeylicenseRevoke(poolId, regKey, memId string) error {
 	log.Printf("Response after delete:%+v", r1)
 	return nil
 }
-func (b *BigIP) LicenseRevoke(config interface{}, poolId, regKey, memId string) error {
+func (b *BigIQ) LicenseRevoke(config interface{}, poolId, regKey, memId string) error {
 	log.Printf("Deleting License for Member:%+v from LicenseRevoke", memId)
 	_, err := b.deleteReqBody(config, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses, poolId, uriOfferings, regKey, uriMembers, memId)
 	if err != nil {
@@ -318,7 +380,7 @@ func (b *BigIP) LicenseRevoke(config interface{}, poolId, regKey, memId string) 
 	log.Printf("Response after delete:%+v", r1)
 	return nil
 }
-func (b *BigIP) PostAs3Bigiq(as3NewJson string) (error, string) {
+func (b *BigIQ) PostAs3Bigiq(as3NewJson string) (error, string) {
 	resp, err := b.postReq(as3NewJson, uriMgmt, uriShared, uriAppsvcs, uriDeclare)
 	if err != nil {
 		return err, ""
@@ -353,7 +415,7 @@ func (b *BigIP) PostAs3Bigiq(as3NewJson string) (error, string) {
 
 }
 
-func (b *BigIP) GetAs3Bigiq(targetRef, tenantRef string) (string, error) {
+func (b *BigIQ) GetAs3Bigiq(targetRef, tenantRef string) (string, error) {
 	as3Json := make(map[string]interface{})
 	as3Json["class"] = "AS3"
 	as3Json["action"] = "deploy"
@@ -450,7 +512,7 @@ func (b *BigIP) GetAs3Bigiq(targetRef, tenantRef string) (string, error) {
 	return as3String, nil
 }
 
-func (b *BigIP) DeleteAs3Bigiq(as3NewJson string, tenantName string) (error, string) {
+func (b *BigIQ) DeleteAs3Bigiq(as3NewJson string, tenantName string) (error, string) {
 	as3Json, err := tenantTrimToDelete(as3NewJson)
 	if err != nil {
 		log.Println("[ERROR] Error in trimming the as3 json")
@@ -494,4 +556,233 @@ func contains(slice []string, item string) bool {
 	}
 	_, ok := set[item]
 	return ok
+}
+
+// NewSession sets up our connection to the BIG-IP system.
+func NewSession(host, port, user, passwd string, configOptions *ConfigOptions) *BigIQ {
+	var url string
+	if !strings.HasPrefix(host, "http") {
+		url = fmt.Sprintf("https://%s", host)
+	} else {
+		url = host
+	}
+	if port != "" {
+		url = url + ":" + port
+	}
+	if configOptions == nil {
+		configOptions = defaultConfigOptions
+	}
+	return &BigIQ{
+		Host:     url,
+		User:     user,
+		Password: passwd,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
+		ConfigOptions: configOptions,
+	}
+}
+
+// NewTokenSession sets up our connection to the BIG-IP system, and
+// instructs the session to use token authentication instead of Basic
+// Auth. This is required when using an external authentication
+// provider, such as Radius or Active Directory. loginProviderName is
+// probably "tmos" but your environment may vary.
+func NewTokenSession(host, port, user, passwd, loginProviderName string, configOptions *ConfigOptions) (b *BigIQ, err error) {
+	type authReq struct {
+		Username          string `json:"username"`
+		Password          string `json:"password"`
+		LoginProviderName string `json:"loginProviderName"`
+	}
+	type authResp struct {
+		Token struct {
+			Token string
+		}
+	}
+
+	auth := authReq{
+		user,
+		passwd,
+		loginProviderName,
+	}
+
+	marshalJSON, err := json.Marshal(auth)
+	if err != nil {
+		return
+	}
+
+	req := &APIRequest{
+		Method:      "post",
+		URL:         "mgmt/shared/authn/login",
+		Body:        string(marshalJSON),
+		ContentType: "application/json",
+	}
+
+	b = NewSession(host, port, user, passwd, configOptions)
+	resp, err := b.APICall(req)
+	if err != nil {
+		return
+	}
+
+	if resp == nil {
+		err = fmt.Errorf("unable to acquire authentication token")
+		return
+	}
+
+	var aresp authResp
+	err = json.Unmarshal(resp, &aresp)
+	if err != nil {
+		return
+	}
+
+	if aresp.Token.Token == "" {
+		err = fmt.Errorf("unable to acquire authentication token")
+		return
+	}
+
+	b.Token = aresp.Token.Token
+
+	return
+}
+
+// APICall is used to query the BIG-IP web API.
+func (b *BigIQ) APICall(options *APIRequest) ([]byte, error) {
+	var req *http.Request
+	client := &http.Client{
+		Transport: b.Transport,
+		Timeout:   b.ConfigOptions.APICallTimeout,
+	}
+	var format string
+	if strings.Contains(options.URL, "mgmt/") {
+		format = "%s/%s"
+	} else {
+		format = "%s/mgmt/tm/%s"
+	}
+	url := fmt.Sprintf(format, b.Host, options.URL)
+	body := bytes.NewReader([]byte(options.Body))
+	req, _ = http.NewRequest(strings.ToUpper(options.Method), url, body)
+	if b.Token != "" {
+		req.Header.Set("X-F5-Auth-Token", b.Token)
+	} else if options.URL != "mgmt/shared/authn/login" {
+		req.SetBasicAuth(b.User, b.Password)
+	}
+
+	//fmt.Println("REQ -- ", options.Method, " ", url," -- ",options.Body)
+
+	if len(options.ContentType) > 0 {
+		req.Header.Set("Content-Type", options.ContentType)
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+
+	data, _ := ioutil.ReadAll(res.Body)
+
+	if res.StatusCode >= 400 {
+		if res.Header["Content-Type"][0] == "application/json" {
+			return data, b.checkError(data)
+		}
+
+		return data, errors.New(fmt.Sprintf("HTTP %d :: %s", res.StatusCode, string(data[:])))
+	}
+
+	return data, nil
+}
+
+func (b *BigIQ) iControlPath(parts []string) string {
+	var buffer bytes.Buffer
+	for i, p := range parts {
+		buffer.WriteString(strings.Replace(p, "/", "~", -1))
+		if i < len(parts)-1 {
+			buffer.WriteString("/")
+		}
+	}
+	return buffer.String()
+}
+
+//Generic delete
+func (b *BigIQ) delete(path ...string) error {
+	req := &APIRequest{
+		Method: "delete",
+		URL:    b.iControlPath(path),
+	}
+
+	_, callErr := b.APICall(req)
+	return callErr
+}
+
+// checkError handles any errors we get from our API requests. It returns either the
+// message of the error, if any, or nil.
+func (b *BigIQ) checkError(resp []byte) error {
+	if len(resp) == 0 {
+		return nil
+	}
+
+	var reqError RequestError
+
+	err := json.Unmarshal(resp, &reqError)
+	if err != nil {
+		return errors.New(fmt.Sprintf("%s\n%s", err.Error(), string(resp[:])))
+	}
+
+	err = reqError.Error()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//Get a url and populate an entity. If the entity does not exist (404) then the
+//passed entity will be untouched and false will be returned as the second parameter.
+//You can use this to distinguish between a missing entity or an actual error.
+func (b *BigIQ) getForEntity(e interface{}, path ...string) (error, bool) {
+	req := &APIRequest{
+		Method:      "get",
+		URL:         b.iControlPath(path),
+		ContentType: "application/json",
+	}
+
+	resp, err := b.APICall(req)
+	if err != nil {
+		var reqError RequestError
+		json.Unmarshal(resp, &reqError)
+		if reqError.Code == 404 {
+			return nil, false
+		}
+		return err, false
+	}
+
+	err = json.Unmarshal(resp, e)
+	if err != nil {
+		return err, false
+	}
+
+	return nil, true
+}
+
+func (b *BigIQ) getForEntityNew(e interface{}, path ...string) (error, bool) {
+	req := &APIRequest{
+		Method:      "get",
+		URL:         b.iControlPath(path),
+		ContentType: "application/json",
+	}
+
+	resp, err := b.APICall(req)
+	if err != nil {
+		var reqError RequestError
+		json.Unmarshal(resp, &reqError)
+		return err, false
+	}
+	err = json.Unmarshal(resp, e)
+	if err != nil {
+		return err, false
+	}
+	return nil, true
 }

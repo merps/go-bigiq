@@ -8,7 +8,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 */
-package bigip
+package bigiq
 
 import (
 	"encoding/json"
@@ -64,7 +64,7 @@ type UnicastAddress struct {
 	Port          int    `json:"port"`
 }
 
-// Device represents an individual bigip as viewed from the cluster
+// Device represents an individual BigIQ as viewed from the cluster
 // see:	https://devcentral.f5.com/Wiki/iControlREST.APIRef_tm_cm_device.ashx
 type Device struct {
 	Name               string   `json:"name,omitempty"`
@@ -215,7 +215,7 @@ func (p *LIC) UnmarshalJSON(b []byte) error {
 	return marshal(p, &dto)
 }
 
-func (b *BigIP) getLicensePool() (*LicensePool, error) {
+func (b *BigIQ) getLicensePool() (*LicensePool, error) {
 	var licensePool LicensePool
 	err, _ := b.getForEntity(&licensePool, uriMgmt, uriCm, uriDiv, uriLins, uriPoo, uriPur, uriLicn)
 	if err != nil {
@@ -229,7 +229,7 @@ func (b *BigIP) getLicensePool() (*LicensePool, error) {
 }
 
 // VirtualAddresses returns a list of virtual addresses.
-func (b *BigIP) LIC() (*LIC, error) {
+func (b *BigIQ) LIC() (*LIC, error) {
 	var va LIC
 	licensePool, licensePoolErr := b.getLicensePool()
 	if licensePoolErr != nil {
@@ -242,7 +242,7 @@ func (b *BigIP) LIC() (*LIC, error) {
 	return &va, nil
 }
 
-func (b *BigIP) CreateLIC(deviceAddress string, username string, password string) error {
+func (b *BigIQ) CreateLIC(deviceAddress string, username string, password string) error {
 	config := &LIC{
 		DeviceAddress: deviceAddress,
 		Username:      username,
@@ -257,7 +257,7 @@ func (b *BigIP) CreateLIC(deviceAddress string, username string, password string
 	return b.post(config, uriMgmt, uriCm, uriDiv, uriLins, uriPoo, uriPur, uriLicn, licensePool.Items[0].Uuid, uriMemb)
 }
 
-func (b *BigIP) ModifyLIC(config *LIC) error {
+func (b *BigIQ) ModifyLIC(config *LIC) error {
 	licensePool, licensePoolErr := b.getLicensePool()
 	if licensePoolErr != nil {
 		return licensePoolErr
@@ -265,7 +265,7 @@ func (b *BigIP) ModifyLIC(config *LIC) error {
 	return b.post(config, uriMgmt, uriCm, uriDiv, uriLins, uriPoo, uriPur, uriLicn, licensePool.Items[0].Uuid, uriMemb)
 }
 
-func (b *BigIP) LICs() (*LIC, error) {
+func (b *BigIQ) LICs() (*LIC, error) {
 	var members LIC
 	licensePool, licensePoolErr := b.getLicensePool()
 	if licensePoolErr != nil {
@@ -280,7 +280,7 @@ func (b *BigIP) LICs() (*LIC, error) {
 	return &members, nil
 }
 
-func (b *BigIP) CreateDevice(name, configsyncIp, mirrorIp, mirrorSecondaryIp string) error {
+func (b *BigIQ) CreateDevice(name, configsyncIp, mirrorIp, mirrorSecondaryIp string) error {
 	config := &Device{
 		Name:              name,
 		ConfigsyncIp:      configsyncIp,
@@ -292,15 +292,15 @@ func (b *BigIP) CreateDevice(name, configsyncIp, mirrorIp, mirrorSecondaryIp str
 }
 
 // API does not work, you cannot modify API issue
-func (b *BigIP) ModifyDevice(config *Device) error {
+func (b *BigIQ) ModifyDevice(config *Device) error {
 	return b.put(config, uriCm, uriDiv)
 }
 
-func (b *BigIP) DeleteDevice(name string) error {
+func (b *BigIQ) DeleteDevice(name string) error {
 	return b.delete(uriCm, uriDiv, name)
 }
 
-func (b *BigIP) Devices(name string) (*Device, error) {
+func (b *BigIQ) Devices(name string) (*Device, error) {
 	var device Device
 	err, _ := b.getForEntity(&device, uriCm, uriDiv, name)
 
@@ -311,8 +311,8 @@ func (b *BigIP) Devices(name string) (*Device, error) {
 	return &device, nil
 }
 
-// GetDevices returns a list of the bigip's in the cluster.
-func (b *BigIP) GetDevices() ([]Device, error) {
+// GetDevices returns a list of the BigIQ's in the cluster.
+func (b *BigIQ) GetDevices() ([]Device, error) {
 	var devices Devices
 	err, _ := b.getForEntity(&devices, uriCm, uriDiv)
 
@@ -323,18 +323,18 @@ func (b *BigIP) GetDevices() ([]Device, error) {
 	return devices.Devices, nil
 }
 
-func (b *BigIP) CreateDevicegroup(p *Devicegroup) error {
+func (b *BigIQ) CreateDevicegroup(p *Devicegroup) error {
 	return b.post(p, uriCm, uriDG)
 }
 
-func (b *BigIP) UpdateDevicegroup(name string, p *Devicegroup) error {
+func (b *BigIQ) UpdateDevicegroup(name string, p *Devicegroup) error {
 	return b.put(p, uriCm, uriDG, name)
 }
-func (b *BigIP) ModifyDevicegroup(config *Devicegroup) error {
+func (b *BigIQ) ModifyDevicegroup(config *Devicegroup) error {
 	return b.put(config, uriCm, uriDG)
 }
 
-func (b *BigIP) Devicegroups(name string) (*Devicegroup, error) {
+func (b *BigIQ) Devicegroups(name string) (*Devicegroup, error) {
 	var devicegroup Devicegroup
 	err, _ := b.getForEntity(&devicegroup, uriCm, uriDG, name)
 	if err != nil {
@@ -344,15 +344,15 @@ func (b *BigIP) Devicegroups(name string) (*Devicegroup, error) {
 	return &devicegroup, nil
 }
 
-func (b *BigIP) DeleteDevicegroup(name string) error {
+func (b *BigIQ) DeleteDevicegroup(name string) error {
 	return b.delete(uriCm, uriDG, name)
 }
 
-func (b *BigIP) DeleteDevicegroupDevices(name, rname string) error {
+func (b *BigIQ) DeleteDevicegroupDevices(name, rname string) error {
 	return b.delete(uriCm, uriDG, name, uriDevices, rname)
 }
 
-func (b *BigIP) DevicegroupsDevices(name, rname string) (*Devicegroup, error) {
+func (b *BigIQ) DevicegroupsDevices(name, rname string) (*Devicegroup, error) {
 	var devicegroup Devicegroup
 	err, _ := b.getForEntity(&devicegroup, uriCm, uriDG, name, uriDevices, rname)
 	if err != nil {

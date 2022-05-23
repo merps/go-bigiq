@@ -8,7 +8,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 */
-package bigip
+package bigiq
 
 import (
 	"encoding/json"
@@ -51,13 +51,13 @@ type NTP struct {
 	Timezone    string   `json:"timezone,omitempty"`
 }
 
-type BigipCommand struct {
+type BigIQCommand struct {
 	Command       string `json:"command"`
 	UtilCmdArgs   string `json:"utilCmdArgs"`
 	CommandResult string `json:"commandResult,omitempty"`
 }
 
-type BigipCmdResp struct {
+type BigIQCmdResp struct {
 	Code       int           `json:"code"`
 	Message    string        `json:"message"`
 	ErrorStack []interface{} `json:"errorStack"`
@@ -187,11 +187,11 @@ type TRAP struct {
 	Version                  string `json:"version,omitempty"`
 }
 
-type Bigiplicenses struct {
-	Bigiplicenses []Bigiplicense `json:"items"`
+type BigIQlicenses struct {
+	BigIQlicenses []BigIQlicense `json:"items"`
 }
 
-type Bigiplicense struct {
+type BigIQlicense struct {
 	Registration_key string `json:"registrationKey,omitempty"`
 	Command          string `json:"command,omitempty"`
 }
@@ -361,7 +361,7 @@ type Key struct {
 }
 
 // Certificates returns a list of certificates.
-func (b *BigIP) Certificates() (*Certificates, error) {
+func (b *BigIQ) Certificates() (*Certificates, error) {
 	var certs Certificates
 	err, _ := b.getForEntity(&certs, uriSys, uriFile, uriSslCert)
 	if err != nil {
@@ -372,32 +372,32 @@ func (b *BigIP) Certificates() (*Certificates, error) {
 }
 
 // AddCertificate installs a certificate.
-func (b *BigIP) AddCertificate(cert *Certificate) error {
+func (b *BigIQ) AddCertificate(cert *Certificate) error {
 	return b.post(cert, uriSys, uriFile, uriSslCert)
 }
 
 // AddExternalDatagroupfile adds datagroup file
-func (b *BigIP) AddExternalDatagroupfile(dataGroup *ExternalDGFile) error {
+func (b *BigIQ) AddExternalDatagroupfile(dataGroup *ExternalDGFile) error {
 	return b.post(dataGroup, uriSys, uriFile, uriDataGroup)
 }
 
 // DeleteExternalDatagroupfile removes a Datagroup file.
-func (b *BigIP) DeleteExternalDatagroupfile(name string) error {
+func (b *BigIQ) DeleteExternalDatagroupfile(name string) error {
 	return b.delete(uriSys, uriFile, uriDataGroup, name)
 }
 
 // ModifyExternalDatagroupfile modify datagroup file
-func (b *BigIP) ModifyExternalDatagroupfile(dgName string, dataGroup *ExternalDGFile) error {
+func (b *BigIQ) ModifyExternalDatagroupfile(dgName string, dataGroup *ExternalDGFile) error {
 	return b.patch(dataGroup, uriSys, uriFile, uriDataGroup, dgName)
 }
 
 // ModifyCertificate installs a certificate.
-func (b *BigIP) ModifyCertificate(certName string, cert *Certificate) error {
+func (b *BigIQ) ModifyCertificate(certName string, cert *Certificate) error {
 	return b.patch(cert, uriSys, uriFile, uriSslCert, certName)
 }
 
-// UploadCertificate copies a certificate local disk to BIGIP
-func (b *BigIP) UploadCertificate(certname, certpath, partition string) error {
+// UploadCertificate copies a certificate local disk to BigIQ
+func (b *BigIQ) UploadCertificate(certname, certpath, partition string) error {
 	certbyte := []byte(certpath)
 	_, err := b.UploadBytes(certbyte, certname)
 	if err != nil {
@@ -419,7 +419,7 @@ func (b *BigIP) UploadCertificate(certname, certpath, partition string) error {
 }
 
 // GetCertificate retrieves a Certificate by name. Returns nil if the certificate does not exist
-func (b *BigIP) GetCertificate(name string) (*Certificate, error) {
+func (b *BigIQ) GetCertificate(name string) (*Certificate, error) {
 	var cert Certificate
 	err, ok := b.getForEntity(&cert, uriSys, uriFile, uriSslCert, name)
 	if err != nil {
@@ -433,12 +433,12 @@ func (b *BigIP) GetCertificate(name string) (*Certificate, error) {
 }
 
 // DeleteCertificate removes a certificate.
-func (b *BigIP) DeleteCertificate(name string) error {
+func (b *BigIQ) DeleteCertificate(name string) error {
 	return b.delete(uriSys, uriFile, uriSslCert, name)
 }
 
-// UpdateCertificate copies a certificate local disk to BIGIP
-func (b *BigIP) UpdateCertificate(certname, certpath, partition string) error {
+// UpdateCertificate copies a certificate local disk to BigIQ
+func (b *BigIQ) UpdateCertificate(certname, certpath, partition string) error {
 	certbyte := []byte(certpath)
 	_, err := b.UploadBytes(certbyte, certname)
 	if err != nil {
@@ -458,8 +458,8 @@ func (b *BigIP) UpdateCertificate(certname, certpath, partition string) error {
 	return nil
 }
 
-// UploadKey copies a certificate key from local disk to BIGIP
-func (b *BigIP) UploadKey(keyname, keypath, partition string) error {
+// UploadKey copies a certificate key from local disk to BigIQ
+func (b *BigIQ) UploadKey(keyname, keypath, partition string) error {
 	keybyte := []byte(keypath)
 	_, err := b.UploadBytes(keybyte, keyname)
 	if err != nil {
@@ -480,8 +480,8 @@ func (b *BigIP) UploadKey(keyname, keypath, partition string) error {
 	return nil
 }
 
-// UpdateKey copies a certificate key from local disk to BIGIP
-func (b *BigIP) UpdateKey(keyname, keypath, partition string) error {
+// UpdateKey copies a certificate key from local disk to BigIQ
+func (b *BigIQ) UpdateKey(keyname, keypath, partition string) error {
 	keybyte := []byte(keypath)
 	_, err := b.UploadBytes(keybyte, keyname)
 	if err != nil {
@@ -504,7 +504,7 @@ func (b *BigIP) UpdateKey(keyname, keypath, partition string) error {
 }
 
 // Keys returns a list of keys.
-func (b *BigIP) Keys() (*Keys, error) {
+func (b *BigIQ) Keys() (*Keys, error) {
 	var keys Keys
 	err, _ := b.getForEntity(&keys, uriSys, uriFile, uriSslKey)
 	if err != nil {
@@ -515,17 +515,17 @@ func (b *BigIP) Keys() (*Keys, error) {
 }
 
 // AddKey installs a key.
-func (b *BigIP) AddKey(config *Key) error {
+func (b *BigIQ) AddKey(config *Key) error {
 	return b.post(config, uriSys, uriFile, uriSslKey)
 }
 
 // ModifyKey Updates a key.
-func (b *BigIP) ModifyKey(keyName string, config *Key) error {
+func (b *BigIQ) ModifyKey(keyName string, config *Key) error {
 	return b.patch(config, uriSys, uriFile, uriSslKey, keyName)
 }
 
 // GetKey retrieves a key by name. Returns nil if the key does not exist.
-func (b *BigIP) GetKey(name string) (*Key, error) {
+func (b *BigIQ) GetKey(name string) (*Key, error) {
 	var key Key
 	err, ok := b.getForEntity(&key, uriSys, uriFile, uriSslKey, name)
 	if err != nil {
@@ -539,11 +539,11 @@ func (b *BigIP) GetKey(name string) (*Key, error) {
 }
 
 // DeleteKey removes a key.
-func (b *BigIP) DeleteKey(name string) error {
+func (b *BigIQ) DeleteKey(name string) error {
 	return b.delete(uriSys, uriFile, uriSslKey, name)
 }
 
-func (b *BigIP) CreateNTP(description string, servers []string, timezone string) error {
+func (b *BigIQ) CreateNTP(description string, servers []string, timezone string) error {
 	config := &NTP{
 		Description: description,
 		Servers:     servers,
@@ -553,11 +553,11 @@ func (b *BigIP) CreateNTP(description string, servers []string, timezone string)
 	return b.patch(config, uriSys, uriNtp)
 }
 
-func (b *BigIP) ModifyNTP(config *NTP) error {
+func (b *BigIQ) ModifyNTP(config *NTP) error {
 	return b.put(config, uriSys, uriNtp)
 }
 
-func (b *BigIP) NTPs() (*NTP, error) {
+func (b *BigIQ) NTPs() (*NTP, error) {
 	var ntp NTP
 	err, _ := b.getForEntity(&ntp, uriSys, uriNtp)
 
@@ -567,18 +567,18 @@ func (b *BigIP) NTPs() (*NTP, error) {
 	return &ntp, nil
 }
 
-func (b *BigIP) BigipVersion() (*Version, error) {
-	var bigipversion Version
-	err, _ := b.getForEntity(&bigipversion, uriMgmt, uriTm, uriCli, uriVersion)
+func (b *BigIQ) BigIQVersion() (*Version, error) {
+	var BigIQversion Version
+	err, _ := b.getForEntity(&BigIQversion, uriMgmt, uriTm, uriCli, uriVersion)
 
 	if err != nil {
 		return nil, err
 	}
-	return &bigipversion, nil
+	return &BigIQversion, nil
 }
 
-func (b *BigIP) RunCommand(config *BigipCommand) (*BigipCommand, error) {
-	var respRef BigipCommand
+func (b *BigIQ) RunCommand(config *BigIQCommand) (*BigIQCommand, error) {
+	var respRef BigIQCommand
 	resp, err := b.postReq(config, uriMgmt, uriTm, uriUtil, uriBash)
 	if err != nil {
 		return nil, err
@@ -587,7 +587,7 @@ func (b *BigIP) RunCommand(config *BigipCommand) (*BigipCommand, error) {
 	return &respRef, nil
 }
 
-func (b *BigIP) CreateDNS(description string, nameservers []string, numberofdots int, search []string) error {
+func (b *BigIQ) CreateDNS(description string, nameservers []string, numberofdots int, search []string) error {
 	config := &DNS{
 		Description:  description,
 		NameServers:  nameservers,
@@ -597,12 +597,12 @@ func (b *BigIP) CreateDNS(description string, nameservers []string, numberofdots
 	return b.patch(config, uriSys, uriDNS)
 }
 
-func (b *BigIP) ModifyDNS(config *DNS) error {
+func (b *BigIQ) ModifyDNS(config *DNS) error {
 	return b.put(config, uriSys, uriDNS)
 }
 
 // DNS & NTP resource does not support Delete API
-func (b *BigIP) DNSs() (*DNS, error) {
+func (b *BigIQ) DNSs() (*DNS, error) {
 	var dns DNS
 	err, _ := b.getForEntity(&dns, uriSys, uriDNS)
 
@@ -613,7 +613,7 @@ func (b *BigIP) DNSs() (*DNS, error) {
 	return &dns, nil
 }
 
-func (b *BigIP) CreateProvision(name string, fullPath string, cpuRatio int, diskRatio int, level string, memoryRatio int) error {
+func (b *BigIQ) CreateProvision(name string, fullPath string, cpuRatio int, diskRatio int, level string, memoryRatio int) error {
 	config := &Provision{
 		Name:        name,
 		FullPath:    fullPath,
@@ -646,7 +646,7 @@ func (b *BigIP) CreateProvision(name string, fullPath string, cpuRatio int, disk
 	return nil
 }
 
-func (b *BigIP) ProvisionModule(config *Provision) error {
+func (b *BigIQ) ProvisionModule(config *Provision) error {
 	log.Printf(" Module Provision:%v", config)
 	if config.Name == "asm" {
 		return b.put(config, uriSys, uriProvision, uriAsm)
@@ -669,12 +669,12 @@ func (b *BigIP) ProvisionModule(config *Provision) error {
 	return nil
 }
 
-func (b *BigIP) DeleteProvision(name string) error {
+func (b *BigIQ) DeleteProvision(name string) error {
 	// Delete API does not exists for resource Provision
 	return b.delete(uriSys, uriProvision, uriIlx, name)
 }
 
-func (b *BigIP) Provisions(name string) (*Provision, error) {
+func (b *BigIQ) Provisions(name string) (*Provision, error) {
 	var provision Provision
 	if name == "afm" {
 		err, _ := b.getForEntity(&provision, uriSys, uriProvision, uriAfm)
@@ -725,7 +725,7 @@ func (b *BigIP) Provisions(name string) (*Provision, error) {
 	return &provision, nil
 }
 
-func (b *BigIP) Syslogs() (*Syslog, error) {
+func (b *BigIQ) Syslogs() (*Syslog, error) {
 	var syslog Syslog
 	err, _ := b.getForEntity(&syslog, uriSys, uriSyslog)
 
@@ -736,15 +736,15 @@ func (b *BigIP) Syslogs() (*Syslog, error) {
 	return &syslog, nil
 }
 
-func (b *BigIP) CreateSyslog(r *Syslog) error {
+func (b *BigIQ) CreateSyslog(r *Syslog) error {
 	return b.patch(r, uriSys, uriSyslog)
 }
 
-func (b *BigIP) ModifySyslog(r *Syslog) error {
+func (b *BigIQ) ModifySyslog(r *Syslog) error {
 	return b.put(r, uriSys, uriSyslog)
 }
 
-func (b *BigIP) CreateSNMP(sysContact string, sysLocation string, allowedAddresses []string) error {
+func (b *BigIQ) CreateSNMP(sysContact string, sysLocation string, allowedAddresses []string) error {
 	config := &SNMP{
 		SysContact:       sysContact,
 		SysLocation:      sysLocation,
@@ -754,11 +754,11 @@ func (b *BigIP) CreateSNMP(sysContact string, sysLocation string, allowedAddress
 	return b.patch(config, uriSys, uriSnmp)
 }
 
-func (b *BigIP) ModifySNMP(config *SNMP) error {
+func (b *BigIQ) ModifySNMP(config *SNMP) error {
 	return b.put(config, uriSys, uriSnmp)
 }
 
-func (b *BigIP) SNMPs() (*SNMP, error) {
+func (b *BigIQ) SNMPs() (*SNMP, error) {
 	var snmp SNMP
 	err, _ := b.getForEntity(&snmp, uriSys, uriSnmp)
 
@@ -769,7 +769,7 @@ func (b *BigIP) SNMPs() (*SNMP, error) {
 	return &snmp, nil
 }
 
-func (b *BigIP) CreateTRAP(name string, authPasswordEncrypted string, authProtocol string, community string, description string, engineId string, host string, port int, privacyPassword string, privacyPasswordEncrypted string, privacyProtocol string, securityLevel string, securityName string, version string) error {
+func (b *BigIQ) CreateTRAP(name string, authPasswordEncrypted string, authProtocol string, community string, description string, engineId string, host string, port int, privacyPassword string, privacyPasswordEncrypted string, privacyProtocol string, securityLevel string, securityName string, version string) error {
 	config := &TRAP{
 		Name:                     name,
 		AuthPasswordEncrypted:    authPasswordEncrypted,
@@ -789,11 +789,11 @@ func (b *BigIP) CreateTRAP(name string, authPasswordEncrypted string, authProtoc
 	return b.post(config, uriSys, uriSnmp, uriTraps)
 }
 
-func (b *BigIP) ModifyTRAP(config *TRAP) error {
+func (b *BigIQ) ModifyTRAP(config *TRAP) error {
 	return b.patch(config, uriSys, uriSnmp, uriTraps)
 }
 
-func (b *BigIP) TRAPs(name string) (*TRAP, error) {
+func (b *BigIQ) TRAPs(name string) (*TRAP, error) {
 	var traps TRAP
 	err, _ := b.getForEntity(&traps, uriSys, uriSnmp, uriTraps, name)
 
@@ -804,39 +804,39 @@ func (b *BigIP) TRAPs(name string) (*TRAP, error) {
 	return &traps, nil
 }
 
-func (b *BigIP) DeleteTRAP(name string) error {
+func (b *BigIQ) DeleteTRAP(name string) error {
 	return b.delete(uriSys, uriSnmp, uriTraps, name)
 }
 
-func (b *BigIP) Bigiplicenses() (*Bigiplicense, error) {
-	var bigiplicense Bigiplicense
-	err, _ := b.getForEntity(&bigiplicense, uriSys, uriLicense)
+func (b *BigIQ) BigIQlicenses() (*BigIQlicense, error) {
+	var BigIQlicense BigIQlicense
+	err, _ := b.getForEntity(&BigIQlicense, uriSys, uriLicense)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &bigiplicense, nil
+	return &BigIQlicense, nil
 }
 
-func (b *BigIP) GetBigipLiceseStatus() (map[string]interface{}, error) {
-	bigipLicense := make(map[string]interface{})
-	err, _ := b.getForEntityNew(&bigipLicense, uriMgmt, uriTm, uriSys, uriLicense)
+func (b *BigIQ) GetBigIQLiceseStatus() (map[string]interface{}, error) {
+	BigIQLicense := make(map[string]interface{})
+	err, _ := b.getForEntityNew(&BigIQLicense, uriMgmt, uriTm, uriSys, uriLicense)
 	c := 0
 	for err != nil {
 		time.Sleep(10 * time.Second)
 		c++
-		err, _ = b.getForEntityNew(&bigipLicense, uriMgmt, uriTm, uriSys, uriLicense)
+		err, _ = b.getForEntityNew(&BigIQLicense, uriMgmt, uriTm, uriSys, uriLicense)
 		if c == 15 {
 			log.Printf("[DEBUG] Device is not up even after waiting for 120 seconds")
 			return nil, err
 		}
 	}
-	return bigipLicense, nil
+	return BigIQLicense, nil
 }
 
-func (b *BigIP) CreateBigiplicense(command, registration_key string) error {
-	config := &Bigiplicense{
+func (b *BigIQ) CreateBigIQlicense(command, registration_key string) error {
+	config := &BigIQlicense{
 		Command:          command,
 		Registration_key: registration_key,
 	}
@@ -844,11 +844,11 @@ func (b *BigIP) CreateBigiplicense(command, registration_key string) error {
 	return b.post(config, uriSys, uriLicense)
 }
 
-func (b *BigIP) ModifyBigiplicense(config *Bigiplicense) error {
+func (b *BigIQ) ModifyBigIQlicense(config *BigIQlicense) error {
 	return b.put(config, uriSys, uriLicense)
 }
 
-func (b *BigIP) LogIPFIXs() (*LogIPFIX, error) {
+func (b *BigIQ) LogIPFIXs() (*LogIPFIX, error) {
 	var logipfix LogIPFIX
 	err, _ := b.getForEntity(&logipfix, uriSys, uriLogConfig, uriDestination, uriIPFIX)
 
@@ -859,7 +859,7 @@ func (b *BigIP) LogIPFIXs() (*LogIPFIX, error) {
 	return &logipfix, nil
 }
 
-func (b *BigIP) CreateLogIPFIX(name, appService, poolName, protocolVersion, serversslProfile string, templateDeleteDelay, templateRetransmitInterval int, transportProfile string) error {
+func (b *BigIQ) CreateLogIPFIX(name, appService, poolName, protocolVersion, serversslProfile string, templateDeleteDelay, templateRetransmitInterval int, transportProfile string) error {
 	config := &LogIPFIX{
 		Name:                       name,
 		AppService:                 appService,
@@ -874,15 +874,15 @@ func (b *BigIP) CreateLogIPFIX(name, appService, poolName, protocolVersion, serv
 	return b.post(config, uriSys, uriLogConfig, uriDestination, uriIPFIX)
 }
 
-func (b *BigIP) ModifyLogIPFIX(config *LogIPFIX) error {
+func (b *BigIQ) ModifyLogIPFIX(config *LogIPFIX) error {
 	return b.put(config, uriSys, uriLogConfig, uriDestination, uriIPFIX)
 }
 
-func (b *BigIP) DeleteLogIPFIX(name string) error {
+func (b *BigIQ) DeleteLogIPFIX(name string) error {
 	return b.delete(uriSys, uriLogConfig, uriDestination, uriIPFIX, name)
 }
 
-func (b *BigIP) LogPublisher() (*LogPublisher, error) {
+func (b *BigIQ) LogPublisher() (*LogPublisher, error) {
 	var logpublisher LogPublisher
 	err, _ := b.getForEntity(&logpublisher, uriSys, uriLogConfig, uriPublisher)
 
@@ -893,66 +893,66 @@ func (b *BigIP) LogPublisher() (*LogPublisher, error) {
 	return &logpublisher, nil
 }
 
-func (b *BigIP) CreateLogPublisher(r *LogPublisher) error {
+func (b *BigIQ) CreateLogPublisher(r *LogPublisher) error {
 	return b.post(r, uriSys, uriLogConfig, uriPublisher)
 }
 
-func (b *BigIP) ModifyLogPublisher(r *LogPublisher) error {
+func (b *BigIQ) ModifyLogPublisher(r *LogPublisher) error {
 	return b.put(r, uriSys, uriLogConfig, uriPublisher)
 }
 
-func (b *BigIP) DeleteLogPublisher(name string) error {
+func (b *BigIQ) DeleteLogPublisher(name string) error {
 	return b.delete(uriSys, uriLogConfig, uriPublisher, name)
 }
 
-// UploadDatagroup copies a template set from local disk to BIGIP
-func (b *BigIP) UploadDatagroup(tmplpath *os.File, dgname, partition, dgtype string, createDg bool) error {
-	_, err := b.UploadDataGroupFile(tmplpath, dgname)
-	if err != nil {
-		return err
-	}
-	sourcepath := "file://" + REST_DOWNLOAD_PATH + "/" + dgname
-	log.Printf("[DEBUG] sourcepath :%+v", sourcepath)
-	dataGroup := ExternalDGFile{
-		Name:       dgname,
-		SourcePath: sourcepath,
-		Partition:  partition,
-		Type:       dgtype,
-	}
-	log.Printf("External DG: %+v\n", dataGroup)
-	if createDg {
-		err = b.AddExternalDatagroupfile(&dataGroup)
-		if err != nil {
-			return err
-		}
-	} else {
-		err = b.ModifyExternalDatagroupfile(fmt.Sprintf("/%s/%s", partition, dgname), &dataGroup)
-		if err != nil {
-			return err
-		}
-	}
-
-	dataGroup2 := ExternalDG{
-		Name:             dgname,
-		ExternalFileName: fmt.Sprintf("/%s/%s", partition, dgname),
-		FullPath:         fmt.Sprintf("/%s/%s", partition, dgname),
-	}
-	if createDg {
-		err = b.AddExternalDataGroup(&dataGroup2)
-		if err != nil {
-			return err
-		}
-	} else {
-		err = b.ModifyExternalDataGroup(&dataGroup2)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
+// UploadDatagroup copies a template set from local disk to BigIQ
+// func (b *BigIQ) UploadDatagroup(tmplpath *os.File, dgname, partition, dgtype string, createDg bool) error {
+//	_, err := b.UploadDataGroupFile(tmplpath, dgname)
+//	if err != nil {
+//return err
+//}
+//sourcepath := "file://" + REST_DOWNLOAD_PATH + "/" + dgname
+//log.Printf("[DEBUG] sourcepath :%+v", sourcepath)
+//dataGroup := ExternalDGFile{
+//		Name:       dgname,
+//SourcePath: sourcepath,
+//Partition:  partition,
+//Type:       dgtype,
+//}
+//log.Printf("External DG: %+v\n", dataGroup)
+//if createDg {
+//		err = b.AddExternalDatagroupfile(&dataGroup)
+//		if err != nil {
+//			return err
+//		}
+//	} else {
+//		err = b.ModifyExternalDatagroupfile(fmt.Sprintf("/%s/%s", partition, dgname), &dataGroup)
+//		if err != nil {
+//			return err
+//		}
+//	}
+//
+//	dataGroup2 := ExternalDG{
+//		Name:             dgname,
+//		ExternalFileName: fmt.Sprintf("/%s/%s", partition, dgname),
+//		FullPath:         fmt.Sprintf("/%s/%s", partition, dgname),
+//	}
+//	if createDg {
+//		err = b.AddExternalDataGroup(&dataGroup2)
+//		if err != nil {
+//			return err
+//		}
+//	} else {
+//		err = b.ModifyExternalDataGroup(&dataGroup2)
+//		if err != nil {
+//			return err
+//		}
+//	}
+//	return nil
+//}
 
 // Upload a file
-func (b *BigIP) UploadDataGroupFile(f *os.File, tmpName string) (*Upload, error) {
+func (b *BigIQ) UploadDataGroupFile(f *os.File, tmpName string) (*Upload, error) {
 	info, err := f.Stat()
 	if err != nil {
 		return nil, err

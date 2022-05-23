@@ -8,7 +8,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 */
-package bigip
+package bigiq
 
 import (
 	"regexp"
@@ -251,7 +251,7 @@ type Vxlans struct {
 	Vxlans []Vxlan `json:"items"`
 }
 
-// Vxlan is the structure for the VXLAN profile on the bigip.
+// Vxlan is the structure for the VXLAN profile on the BigIQ.
 // https://devcentral.f5.com/wiki/iControlREST.APIRef_tm_net_tunnels_vxlan.ashx
 type Vxlan struct {
 	Name              string `json:"name,omitempty"`
@@ -343,7 +343,7 @@ func formatResourceID(name string) string {
 }
 
 // Interfaces returns a list of interfaces.
-func (b *BigIP) Interfaces() (*Interfaces, error) {
+func (b *BigIQ) Interfaces() (*Interfaces, error) {
 	var interfaces Interfaces
 	err, _ := b.getForEntity(&interfaces, uriNet, uriInterface)
 
@@ -355,7 +355,7 @@ func (b *BigIP) Interfaces() (*Interfaces, error) {
 }
 
 // AddInterfaceToVlan associates the given interface to the specified VLAN.
-func (b *BigIP) AddInterfaceToVlan(vlan, iface string, tagged bool) error {
+func (b *BigIQ) AddInterfaceToVlan(vlan, iface string, tagged bool) error {
 	config := &VlanInterface{}
 
 	config.Name = iface
@@ -369,7 +369,7 @@ func (b *BigIP) AddInterfaceToVlan(vlan, iface string, tagged bool) error {
 }
 
 // GetVlanInterfaces returns a list of interface associated to the specified VLAN.
-func (b *BigIP) GetVlanInterfaces(vlan string) (*VlanInterfaces, error) {
+func (b *BigIQ) GetVlanInterfaces(vlan string) (*VlanInterfaces, error) {
 	var vlanInterfaces VlanInterfaces
 	err, _ := b.getForEntity(&vlanInterfaces, uriNet, uriVlan, vlan, uriVlanInterfaces)
 	if err != nil {
@@ -380,7 +380,7 @@ func (b *BigIP) GetVlanInterfaces(vlan string) (*VlanInterfaces, error) {
 }
 
 // SelfIPs returns a list of self IP's.
-func (b *BigIP) SelfIPs() (*SelfIPs, error) {
+func (b *BigIQ) SelfIPs() (*SelfIPs, error) {
 	var self SelfIPs
 	err, _ := b.getForEntity(&self, uriNet, uriSelf)
 	if err != nil {
@@ -391,7 +391,7 @@ func (b *BigIP) SelfIPs() (*SelfIPs, error) {
 }
 
 // SelfIP returns a named Self IP.
-func (b *BigIP) SelfIP(selfip string) (*SelfIP, error) {
+func (b *BigIQ) SelfIP(selfip string) (*SelfIP, error) {
 	var self SelfIP
 	err, _ := b.getForEntity(&self, uriNet, uriSelf, selfip)
 	if err != nil {
@@ -403,23 +403,23 @@ func (b *BigIP) SelfIP(selfip string) (*SelfIP, error) {
 
 // CreateSelfIP adds a new self IP to the BIG-IP system. For <address>, you
 // must include the subnet mask in CIDR notation, i.e.: "10.1.1.1/24".
-func (b *BigIP) CreateSelfIP(config *SelfIP) error {
+func (b *BigIQ) CreateSelfIP(config *SelfIP) error {
 	return b.post(config, uriNet, uriSelf)
 }
 
 // DeleteSelfIP removes a self IP.
-func (b *BigIP) DeleteSelfIP(name string) error {
+func (b *BigIQ) DeleteSelfIP(name string) error {
 	return b.delete(uriNet, uriSelf, name)
 }
 
 // ModifySelfIP allows you to change any attribute of a self IP. Fields that
 // can be modified are referenced in the SelfIP struct.
-func (b *BigIP) ModifySelfIP(name string, config *SelfIP) error {
+func (b *BigIQ) ModifySelfIP(name string, config *SelfIP) error {
 	return b.put(config, uriNet, uriSelf, name)
 }
 
 // Trunks returns a list of trunks.
-func (b *BigIP) Trunks() (*Trunks, error) {
+func (b *BigIQ) Trunks() (*Trunks, error) {
 	var trunks Trunks
 	err, _ := b.getForEntity(&trunks, uriNet, uriTrunk)
 	if err != nil {
@@ -431,7 +431,7 @@ func (b *BigIP) Trunks() (*Trunks, error) {
 
 // CreateTrunk adds a new trunk to the BIG-IP system. <interfaces> must be
 // separated by a comma, i.e.: "1.4, 1.6, 1.8".
-func (b *BigIP) CreateTrunk(name, interfaces string, lacp bool) error {
+func (b *BigIQ) CreateTrunk(name, interfaces string, lacp bool) error {
 	rawInts := strings.Split(interfaces, ",")
 	ints := []string{}
 
@@ -452,18 +452,18 @@ func (b *BigIP) CreateTrunk(name, interfaces string, lacp bool) error {
 }
 
 // DeleteTrunk removes a trunk.
-func (b *BigIP) DeleteTrunk(name string) error {
+func (b *BigIQ) DeleteTrunk(name string) error {
 	return b.delete(uriNet, uriTrunk, name)
 }
 
 // ModifyTrunk allows you to change any attribute of a trunk. Fields that
 // can be modified are referenced in the Trunk struct.
-func (b *BigIP) ModifyTrunk(name string, config *Trunk) error {
+func (b *BigIQ) ModifyTrunk(name string, config *Trunk) error {
 	return b.put(config, uriNet, uriTrunk, name)
 }
 
 // Vlans returns a list of vlans.
-func (b *BigIP) Vlans() (*Vlans, error) {
+func (b *BigIQ) Vlans() (*Vlans, error) {
 	var vlans Vlans
 	err, _ := b.getForEntity(&vlans, uriNet, uriVlan)
 
@@ -475,7 +475,7 @@ func (b *BigIP) Vlans() (*Vlans, error) {
 }
 
 // Vlan returns a named vlan.
-func (b *BigIP) Vlan(name string) (*Vlan, error) {
+func (b *BigIQ) Vlan(name string) (*Vlan, error) {
 	var vlan Vlan
 	err, _ := b.getForEntity(&vlan, uriNet, uriVlan, name)
 
@@ -487,7 +487,7 @@ func (b *BigIP) Vlan(name string) (*Vlan, error) {
 }
 
 // CreateVlan adds a new VLAN to the BIG-IP system.
-func (b *BigIP) CreateVlan(name string, tag int) error {
+func (b *BigIQ) CreateVlan(name string, tag int) error {
 	config := &Vlan{
 		Name: name,
 		Tag:  tag,
@@ -496,18 +496,18 @@ func (b *BigIP) CreateVlan(name string, tag int) error {
 }
 
 // DeleteVlan removes a vlan.
-func (b *BigIP) DeleteVlan(name string) error {
+func (b *BigIQ) DeleteVlan(name string) error {
 	return b.delete(uriNet, uriVlan, name)
 }
 
 // ModifyVlan allows you to change any attribute of a VLAN. Fields that
 // can be modified are referenced in the Vlan struct.
-func (b *BigIP) ModifyVlan(name string, config *Vlan) error {
+func (b *BigIQ) ModifyVlan(name string, config *Vlan) error {
 	return b.put(config, uriNet, uriVlan, name)
 }
 
 // Routes returns a list of routes.
-func (b *BigIP) Routes() (*Routes, error) {
+func (b *BigIQ) Routes() (*Routes, error) {
 	var routes Routes
 	err, _ := b.getForEntity(&routes, uriNet, uriRoute)
 
@@ -518,7 +518,7 @@ func (b *BigIP) Routes() (*Routes, error) {
 	return &routes, nil
 }
 
-func (b *BigIP) GetRoute(name string) (*Route, error) {
+func (b *BigIQ) GetRoute(name string) (*Route, error) {
 	var route Route
 	//values := []string{}
 	//regex := regexp.MustCompile(`^(\/.+\/)?(.+)`)
@@ -546,23 +546,23 @@ func (b *BigIP) GetRoute(name string) (*Route, error) {
 
 // CreateRoute adds a new static route to the BIG-IP system. <dest> must include the
 // subnet mask in CIDR notation, i.e.: "10.1.1.0/24".
-func (b *BigIP) CreateRoute(config *Route) error {
+func (b *BigIQ) CreateRoute(config *Route) error {
 	return b.post(config, uriNet, uriRoute)
 }
 
 // DeleteRoute removes a static route.
-func (b *BigIP) DeleteRoute(name string) error {
+func (b *BigIQ) DeleteRoute(name string) error {
 	return b.delete(uriNet, uriRoute, name)
 }
 
 // ModifyRoute allows you to change any attribute of a static route. Fields that
 // can be modified are referenced in the Route struct.
-func (b *BigIP) ModifyRoute(name string, config *Route) error {
+func (b *BigIQ) ModifyRoute(name string, config *Route) error {
 	return b.put(config, uriNet, uriRoute, name)
 }
 
 // RouteDomains returns a list of route domains.
-func (b *BigIP) RouteDomains() (*RouteDomains, error) {
+func (b *BigIQ) RouteDomains() (*RouteDomains, error) {
 	var rd RouteDomains
 	err, _ := b.getForEntity(&rd, uriNet, uriRouteDomain)
 
@@ -575,7 +575,7 @@ func (b *BigIP) RouteDomains() (*RouteDomains, error) {
 
 // CreateRouteDomain adds a new route domain to the BIG-IP system. <vlans> must be separated
 // by a comma, i.e.: "vlan1010, vlan1020".
-func (b *BigIP) CreateRouteDomain(name string, id int, strict bool, vlans string) error {
+func (b *BigIQ) CreateRouteDomain(name string, id int, strict bool, vlans string) error {
 	strictIsolation := "enabled"
 	vlanMembers := []string{}
 	rawVlans := strings.Split(vlans, ",")
@@ -599,18 +599,18 @@ func (b *BigIP) CreateRouteDomain(name string, id int, strict bool, vlans string
 }
 
 // DeleteRouteDomain removes a route domain.
-func (b *BigIP) DeleteRouteDomain(name string) error {
+func (b *BigIQ) DeleteRouteDomain(name string) error {
 	return b.delete(uriNet, uriRouteDomain, name)
 }
 
 // ModifyRouteDomain allows you to change any attribute of a route domain. Fields that
 // can be modified are referenced in the RouteDomain struct.
-func (b *BigIP) ModifyRouteDomain(name string, config *RouteDomain) error {
+func (b *BigIQ) ModifyRouteDomain(name string, config *RouteDomain) error {
 	return b.put(config, uriNet, uriRouteDomain, name)
 }
 
 // Tunnels returns a list of tunnels.
-func (b *BigIP) Tunnels() (*Tunnels, error) {
+func (b *BigIQ) Tunnels() (*Tunnels, error) {
 	var tunnels Tunnels
 	err, _ := b.getForEntity(&tunnels, uriNet, uriTunnels, uriTunnel)
 	if err != nil {
@@ -621,7 +621,7 @@ func (b *BigIP) Tunnels() (*Tunnels, error) {
 }
 
 // GetTunnel fetches the tunnel by it's name.
-func (b *BigIP) GetTunnel(name string) (*Tunnel, error) {
+func (b *BigIQ) GetTunnel(name string) (*Tunnel, error) {
 	var tunnel Tunnel
 	//result := formatResourceID(name)
 	err, ok := b.getForEntity(&tunnel, uriNet, uriTunnels, uriTunnel, name)
@@ -636,12 +636,12 @@ func (b *BigIP) GetTunnel(name string) (*Tunnel, error) {
 }
 
 // AddTunnel adds a new tunnel to the BIG-IP system from a config.
-func (b *BigIP) AddTunnel(config *Tunnel) error {
+func (b *BigIQ) AddTunnel(config *Tunnel) error {
 	return b.post(config, uriNet, uriTunnels, uriTunnel)
 }
 
 // CreateTunnel adds a new tunnel to the BIG-IP system.
-func (b *BigIP) CreateTunnel(config *Tunnel) error {
+func (b *BigIQ) CreateTunnel(config *Tunnel) error {
 	/*config := &Tunnel{
 		Name:    name,
 		Profile: profile,
@@ -651,16 +651,16 @@ func (b *BigIP) CreateTunnel(config *Tunnel) error {
 }
 
 // DeleteTunnel removes a tunnel.
-func (b *BigIP) DeleteTunnel(name string) error {
+func (b *BigIQ) DeleteTunnel(name string) error {
 	return b.delete(uriNet, uriTunnels, uriTunnel, name)
 }
 
 // ModifyTunnel allows you to change any attribute of a tunnel.
-func (b *BigIP) ModifyTunnel(name string, config *Tunnel) error {
+func (b *BigIQ) ModifyTunnel(name string, config *Tunnel) error {
 	return b.put(config, uriNet, uriTunnels, uriTunnel, name)
 }
 
-func (b *BigIP) GetIkePeer(name string) (*IkePeer, error) {
+func (b *BigIQ) GetIkePeer(name string) (*IkePeer, error) {
 	var ikepeer IkePeer
 	//result := formatResourceID(name)
 	//log.Printf("[DEBUG] Reading IKE Peer:%+v", name)
@@ -675,18 +675,18 @@ func (b *BigIP) GetIkePeer(name string) (*IkePeer, error) {
 	return &ikepeer, nil
 }
 
-func (b *BigIP) CreateIkePeer(config *IkePeer) error {
+func (b *BigIQ) CreateIkePeer(config *IkePeer) error {
 	return b.post(config, uriNet, uriIpsec, uriIkePeer)
 }
-func (b *BigIP) DeleteIkePeer(name string) error {
+func (b *BigIQ) DeleteIkePeer(name string) error {
 	return b.delete(uriNet, uriIpsec, uriIkePeer, name)
 }
-func (b *BigIP) ModifyIkePeer(name string, config *IkePeer) error {
+func (b *BigIQ) ModifyIkePeer(name string, config *IkePeer) error {
 	return b.patch(config, uriNet, uriIpsec, uriIkePeer, name)
 }
 
 // Vxlans returns a list of vxlan profiles.
-func (b *BigIP) Vxlans() ([]Vxlan, error) {
+func (b *BigIQ) Vxlans() ([]Vxlan, error) {
 	var vxlans Vxlans
 	err, _ := b.getForEntity(&vxlans, uriNet, uriTunnels, uriVxlan)
 	if err != nil {
@@ -697,7 +697,7 @@ func (b *BigIP) Vxlans() ([]Vxlan, error) {
 }
 
 // GetVxlan fetches the vxlan profile by it's name.
-func (b *BigIP) GetVxlan(name string) (*Vxlan, error) {
+func (b *BigIQ) GetVxlan(name string) (*Vxlan, error) {
 	var vxlan Vxlan
 	result := formatResourceID(name)
 	err, ok := b.getForEntity(&vxlan, uriNet, uriTunnels, uriVxlan, result)
@@ -712,12 +712,12 @@ func (b *BigIP) GetVxlan(name string) (*Vxlan, error) {
 }
 
 // AddVxlan adds a new vxlan profile to the BIG-IP system.
-func (b *BigIP) AddVxlan(config *Vxlan) error {
+func (b *BigIQ) AddVxlan(config *Vxlan) error {
 	return b.post(config, uriNet, uriTunnels, uriVxlan)
 }
 
 // CreateVxlan adds a new vxlan profile to the BIG-IP system.
-func (b *BigIP) CreateVxlan(name string) error {
+func (b *BigIQ) CreateVxlan(name string) error {
 	config := &Vxlan{
 		Name: name,
 	}
@@ -726,33 +726,33 @@ func (b *BigIP) CreateVxlan(name string) error {
 }
 
 // DeleteVxlan removes a vxlan profile.
-func (b *BigIP) DeleteVxlan(name string) error {
+func (b *BigIQ) DeleteVxlan(name string) error {
 	return b.delete(uriNet, uriTunnels, uriVxlan, name)
 }
 
 // ModifyVxlan allows you to change any attribute of a vxlan profile.
-func (b *BigIP) ModifyVxlan(name string, config *Vxlan) error {
+func (b *BigIQ) ModifyVxlan(name string, config *Vxlan) error {
 	return b.put(config, uriNet, uriTunnels, uriVxlan, name)
 }
 
 // CreateTrafficSelector adds a new IPsec Traffic-selctor to the BIG-IP system.
-func (b *BigIP) CreateTrafficSelector(config *TrafficSelector) error {
+func (b *BigIQ) CreateTrafficSelector(config *TrafficSelector) error {
 	return b.post(config, uriNet, uriIpsec, uriTrafficselector)
 }
 
 // ModifyTrafficSelector allows you to change any attribute of a Traffic-selector.
 // Fields that can be modified are referenced in the TrafficSelector struct.
-func (b *BigIP) ModifyTrafficSelector(name string, config *TrafficSelector) error {
+func (b *BigIQ) ModifyTrafficSelector(name string, config *TrafficSelector) error {
 	return b.patch(config, uriNet, uriIpsec, uriTrafficselector, name)
 }
 
 // DeleteTrafficSelector removes specified Traffic-selector.
-func (b *BigIP) DeleteTrafficSelector(name string) error {
+func (b *BigIQ) DeleteTrafficSelector(name string) error {
 	return b.delete(uriNet, uriIpsec, uriTrafficselector, name)
 }
 
 // GetTrafficselctor returns a named IPsec Traffic selctor.
-func (b *BigIP) GetTrafficselctor(name string) (*TrafficSelector, error) {
+func (b *BigIQ) GetTrafficselctor(name string) (*TrafficSelector, error) {
 	var ts TrafficSelector
 	err, _ := b.getForEntity(&ts, uriNet, uriIpsec, uriTrafficselector, name)
 
@@ -764,23 +764,23 @@ func (b *BigIP) GetTrafficselctor(name string) (*TrafficSelector, error) {
 }
 
 // CreateIPSecPolicy adds a new IPSec policy to the BIG-IP system.
-func (b *BigIP) CreateIPSecPolicy(config *IPSecPolicy) error {
+func (b *BigIQ) CreateIPSecPolicy(config *IPSecPolicy) error {
 	return b.post(config, uriNet, uriIpsec, uriIpsecPolicy)
 }
 
 // ModifyIPSecPolicy allows you to change any attribute of a IPSec policy.
 // Fields that can be modified are referenced in the IPSec policy struct.
-func (b *BigIP) ModifyIPSecPolicy(name string, config *IPSecPolicy) error {
+func (b *BigIQ) ModifyIPSecPolicy(name string, config *IPSecPolicy) error {
 	return b.patch(config, uriNet, uriIpsec, uriIpsecPolicy, name)
 }
 
 // DeleteIPSecPolicy removes specified IPSec policy.
-func (b *BigIP) DeleteIPSecPolicy(name string) error {
+func (b *BigIQ) DeleteIPSecPolicy(name string) error {
 	return b.delete(uriNet, uriIpsec, uriIpsecPolicy, name)
 }
 
 // GetIPSecPolicy returns a named IPsec policy.
-func (b *BigIP) GetIPSecPolicy(name string) (*IPSecPolicy, error) {
+func (b *BigIQ) GetIPSecPolicy(name string) (*IPSecPolicy, error) {
 	var ipsec IPSecPolicy
 	err, _ := b.getForEntity(&ipsec, uriNet, uriIpsec, uriIpsecPolicy, name)
 
@@ -792,23 +792,23 @@ func (b *BigIP) GetIPSecPolicy(name string) (*IPSecPolicy, error) {
 }
 
 // CreateIPSecProfile adds a new IPSec profile to the BIG-IP system.
-func (b *BigIP) CreateIPSecProfile(config *IPSecProfile) error {
+func (b *BigIQ) CreateIPSecProfile(config *IPSecProfile) error {
 	return b.post(config, uriNet, uriTunnels, uriIpsec)
 }
 
 // ModifyIPSecProfile allows you to change any attribute of a IPSec profile.
 // Fields that can be modified are referenced in the IPSec profile struct.
-func (b *BigIP) ModifyIPSecProfile(name string, config *IPSecProfile) error {
+func (b *BigIQ) ModifyIPSecProfile(name string, config *IPSecProfile) error {
 	return b.patch(config, uriNet, uriTunnels, uriIpsec, name)
 }
 
 // DeleteIPSecProfile removes specified IPSec profile.
-func (b *BigIP) DeleteIPSecProfile(name string) error {
+func (b *BigIQ) DeleteIPSecProfile(name string) error {
 	return b.delete(uriNet, uriTunnels, uriIpsec, name)
 }
 
 // GetIPSecProfile returns a named IPsec profile.
-func (b *BigIP) GetIPSecProfile(name string) (*IPSecProfile, error) {
+func (b *BigIQ) GetIPSecProfile(name string) (*IPSecProfile, error) {
 	var ipsec IPSecProfile
 	err, _ := b.getForEntity(&ipsec, uriNet, uriTunnels, uriIpsec, name)
 

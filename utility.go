@@ -8,7 +8,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 */
-package bigip
+package bigiq
 
 import "encoding/json"
 
@@ -83,7 +83,7 @@ func (p *ULIC) UnmarshalJSON(b []byte) error {
 }
 
 // Get the RegKey which is used to know what Bulk license is available on BIG-IQ
-func (b *BigIP) getUtilityPool() (*UtilityPool, error) {
+func (b *BigIQ) getUtilityPool() (*UtilityPool, error) {
 	var utilityPool UtilityPool
 	err, _ := b.getForEntity(&utilityPool, uriMgmt, uriCm, uriDiv, uriLins, uriPoo, uriUtility, uriLicn)
 	if err != nil {
@@ -97,7 +97,7 @@ func (b *BigIP) getUtilityPool() (*UtilityPool, error) {
 }
 
 // Function to get the RegKey
-func (b *BigIP) ULIC() (*ULIC, error) {
+func (b *BigIQ) ULIC() (*ULIC, error) {
 	var va ULIC
 	utilityPool, utilityPoolErr := b.getUtilityPool()
 	if utilityPoolErr != nil {
@@ -110,7 +110,7 @@ func (b *BigIP) ULIC() (*ULIC, error) {
 	return &va, nil
 }
 
-func (b *BigIP) CreateULIC(deviceAddress string, username string, password string, unitOfMeasure string) error {
+func (b *BigIQ) CreateULIC(deviceAddress string, username string, password string, unitOfMeasure string) error {
 	config := &ULIC{
 		DeviceAddress: deviceAddress,
 		Username:      username,
@@ -126,7 +126,7 @@ func (b *BigIP) CreateULIC(deviceAddress string, username string, password strin
 	return b.post(config, uriMgmt, uriCm, uriDiv, uriLins, uriPoo, uriUtility, uriLicn, utilityPool.Items[0].RegKey, uriOfferings, uriF5BIGMSPBT10G, uriMemb)
 }
 
-func (b *BigIP) ModifyULIC(config *ULIC) error {
+func (b *BigIQ) ModifyULIC(config *ULIC) error {
 	utilityPool, utilityPoolErr := b.getUtilityPool()
 	if utilityPoolErr != nil {
 		return utilityPoolErr
@@ -134,7 +134,7 @@ func (b *BigIP) ModifyULIC(config *ULIC) error {
 	return b.patch(config, uriMgmt, uriCm, uriDiv, uriLins, uriPoo, uriUtility, uriLicn, utilityPool.Items[0].RegKey, uriMemb)
 }
 
-func (b *BigIP) ULICs() (*ULIC, error) {
+func (b *BigIQ) ULICs() (*ULIC, error) {
 	var members ULIC
 	utilityPool, utilityPoolErr := b.getUtilityPool()
 	if utilityPoolErr != nil {
@@ -149,7 +149,7 @@ func (b *BigIP) ULICs() (*ULIC, error) {
 	return &members, nil
 }
 
-func (b *BigIP) DeleteULIC(config *ULIC) error {
+func (b *BigIQ) DeleteULIC(config *ULIC) error {
 
 	utilityPool, utilityPoolErr := b.getUtilityPool()
 	if utilityPoolErr != nil {
