@@ -30,7 +30,7 @@ const (
 
 var tenantProperties []string = []string{"class", "constants", "controls", "defaultRouteDomain", "enable", "label", "optimisticLockKey", "remark"}
 
-type BigiqDevice struct {
+type BigIqDevice struct {
 	Address  string `json:"address"`
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -53,9 +53,9 @@ type BigIQ struct {
 	Token     string // if set, will be used instead of User/Password
 	Transport *http.Transport
 	// UserAgent is an optional field that specifies the caller of this request.
-	UserAgent string
-	Teem      bool
-	// ConfigOptions *ConfigOptions
+	UserAgent     string
+	Teem          bool
+	ConfigOptions *ConfigOptions
 }
 
 // APIRequest builds our request before sending it to the server.
@@ -294,7 +294,7 @@ func (b *BigIQ) GetManagedDevices() (*devicesList, error) {
 	return &self, nil
 }
 
-func (b *BigIQ) GetDeviceId(deviceName string) (string, error) {
+func (b *BigIQ) GetDeviceId() (string, error) {
 	var self devicesList
 	err, _ := b.getForEntity(&self, uriMgmt, uriShared, uriResolver, uriDevicegroup, uriCmBigIQ, uriDevices)
 	if err != nil {
