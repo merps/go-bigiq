@@ -20,7 +20,7 @@ Some of the tasks you can do are as follows:
 
 * connect and authorise (gotta start somewhere)
 
-> **Note**: You must be on version 8.0+! For the features that deal with internal data groups, you must be running version 11.6+!
+> **Note**: You must be on version 8.0+! 
 
 ### Examples & Documentation
 Visit the [GoDoc][godoc-go-bigiq] page for package documentation and examples. (TODO - learning)
