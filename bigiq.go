@@ -53,9 +53,9 @@ type BigIQ struct {
 	Token     string // if set, will be used instead of User/Password
 	Transport *http.Transport
 	// UserAgent is an optional field that specifies the caller of this request.
-	UserAgent     string
-	Teem          bool
-	ConfigOptions *ConfigOptions
+	UserAgent string
+	Teem      bool
+	// ConfigOptions *ConfigOptions
 }
 
 // APIRequest builds our request before sending it to the server.
