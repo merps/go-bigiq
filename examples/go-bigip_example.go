@@ -7,7 +7,7 @@ import (
 
 func main() {
 	// Connect to the BIG-IP system.
-	f5 := bigiq.NewSession("10.0.90.253", "8080", "admin", "C0pp3rW0rk5!", nil)
+	f5 := bigiq.NewSession("10.0.90.253", "8080", "admin", "superSecretPassword!", nil)
 
 	// Get a list of all VLAN's, and print their names to the console.
 	//devices, err := f5.GetDevices()
