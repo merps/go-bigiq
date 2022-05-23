@@ -1,6 +1,7 @@
 
 [//]: # (Original work Copyright © 2015 Scott Ware)
 [//]: # (Modifications Copyright 2019 F5 Networks Inc)
+[//]: # (Modifications Copyright © 2022 m.kennedy@f5.com - forked from go-bigip)
 [//]: # (Licensed under the Apache License, Version 2.0 [the "License"];)
 [//]: # (You may not use this file except in compliance with the License.)
 [//]: # (You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0)
@@ -9,25 +10,21 @@
 [//]: # (See the License for the specific language governing permissions and limitations under the License.)
 
 ## go-bigiq
-[![GoDoc](https://godoc.org/github.com/f5devcentral/go-bigiq?status.svg)](https://godoc.org/github.com/f5devcentral/go-bigiq) [![Travis-CI](https://travis-ci.org/f5devcentral/go-bigiq.svg?branch=master)](https://travis-ci.org/f5devcentral/go-bigiq)
-[![Go Report Card](https://goreportcard.com/badge/github.com/f5devcentral/go-bigiq)](https://goreportcard.com/report/github.com/f5devcentral/go-bigiq)
-[![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/f5devcentral/go-bigiq/master/LICENSE)
+[![GoDoc](https://godoc.org/github.com/merps/go-bigiq?status.svg)](https://godoc.org/github.com/merps/go-bigiq) [![Travis-CI](https://travis-ci.org/f5devcentral/go-bigiq.svg?branch=master)](https://travis-ci.org/f5devcentral/go-bigiq)
+[![Go Report Card](https://goreportcard.com/badge/github.com/merps/go-bigiq)](https://goreportcard.com/report/github.com/merps/go-bigiq)
+[![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/merps/go-bigiq/master/LICENSE)
 
 A Go package that interacts with F5 BIG-IQ systems using the REST API.
 
 Some of the tasks you can do are as follows:
 
-* Get a detailed list of all nodes, pools, vlans, routes, trunks, route domains, self IP's, virtual servers, monitors on the BIG-IQ system.
-* Create/delete nodes, pools, vlans, routes, trunks, route domains, self IP's, virtual servers, monitors, etc.
-* Modify individual settings for all of the above.
-* Change the status of nodes and individual pool members (enable/disable).
+* connect and authorise (gotta start somewhere)
 
-> **Note**: You must be on version 11.4+! For the features that deal with internal data groups, you must be running version 11.6+!
+> **Note**: You must be on version 8.0+! For the features that deal with internal data groups, you must be running version 11.6+!
 
 ### Examples & Documentation
-Visit the [GoDoc][godoc-go-bigiq] page for package documentation and examples.
+Visit the [GoDoc][godoc-go-bigiq] page for package documentation and examples. (TODO - learning)
 
-Here's a [blog post][blog] that goes a little more in-depth.
 
 ### Contributors
 A very special thanks to the following who have helped contribute to this software, especially:
@@ -35,6 +32,5 @@ A very special thanks to the following who have helped contribute to this softwa
 * [Adam Burnett](https://github.com/aburnett)
 * [Michael D. Ivey](https://github.com/ivey)
 
-[godoc-go-bigiq]: http://godoc.org/github.com/f5devcentral/go-bigiq
-[license]: https://github.com/f5devcentral/go-bigiq/blob/master/LICENSE
-[blog]: http://sdubs.org/go-big-ip-or-go-home/
+[godoc-go-bigiq]: http://godoc.org/github.com/merps/go-bigiq
+[license]: https://github.com/merps/go-bigiq/blob/master/LICENSE
