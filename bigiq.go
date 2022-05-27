@@ -206,7 +206,7 @@ func (b *BigIQ) PostLicense(config *LicenseParam) (string, error) {
 		return "", err
 	}
 	respRef := make(map[string]interface{})
-	json.Unmarshal(resp, &respRef)
+	_ = json.Unmarshal(resp, &respRef)
 	respID := respRef["id"].(string)
 	time.Sleep(5 * time.Second)
 	return respID, nil
@@ -294,7 +294,7 @@ func (b *BigIQ) GetManagedDevices() (*devicesList, error) {
 	return &self, nil
 }
 
-func (b *BigIQ) GetDeviceId() (string, error) {
+func (b *BigIQ) GetDeviceId(deviceName string) (string, error) {
 	var self devicesList
 	err, _ := b.getForEntity(&self, uriMgmt, uriShared, uriResolver, uriDevicegroup, uriCmBigIQ, uriDevices)
 	if err != nil {

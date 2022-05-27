@@ -6,8 +6,9 @@ import (
 )
 
 func main() {
-	// Connect to the BIG-IP system.
-	f5 := bigiq.NewSession("10.0.90.254", "8080", "admin", "superSecretPassword!", nil)
+	// Connect to the BIQ-IP system. Enabled basic auth in BIQ - https://support.f5.com/csp/article/K43725273
+	// TODO: how to push an F5-Auth-Token?
+	f5 := bigiq.NewSession("10.0.90.253", "443", "admin", "SuperSecretPAssword!", nil)
 
 	// Get a list of all VLAN's, and print their names to the console.
 	//devices, err := f5.GetDevices()
@@ -17,15 +18,21 @@ func main() {
 	//	fmt.Println(devices)
 	//}
 
-	vlans, err := f5.Vlans()
+	devices, err := f5.GetDevices()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	for _, vlan := range vlans.Vlans {
-		fmt.Println(vlan.Name)
+	for _, devices := range devices {
+		fmt.Println(devices)
 	}
 
+	logsrvs, err := f5.Syslogs()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(logsrvs)
+	}
 	// Create a VLAN
 	//f5.CreateVlan("vlan1138", 1138)
 	//f5.CreateVlan("vlan421", 421)
