@@ -7,8 +7,8 @@ import (
 
 func main() {
 	// Connect to the BIQ-IP system. Enabled basic auth in BIQ - https://support.f5.com/csp/article/K43725273
-	// TODO: how to push an F5-Auth-Token?
-	f5 := bigiq.NewSession("10.0.90.253", "443", "admin", "SuperSecret", nil)
+	// Correct by adding unknown type var - really!?
+	f5, _ := bigiq.NewTokenSession("10.0.90.253", "443", "admin", "zun.lull-PLEW7ar", "tmos", nil)
 
 	// Get devices listed
 	devices, err := f5.GetDevices()
@@ -35,6 +35,14 @@ func main() {
 		fmt.Println(err)
 	} else {
 		fmt.Println(interfaces)
+	}
+
+	//Get Licenses
+	licenses, err := f5.GetRegPools()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(licenses)
 	}
 	// Create a VLAN
 	//f5.CreateVlan("vlan1138", 1138)
