@@ -164,6 +164,12 @@ type regKeyAssignStatus struct {
 	Status         string `json:"status"`
 }
 
+type LicenseDetails struct {
+	RegKey string `json:"regKey,omitempty"`
+	Name   string `json:"name,omitempty"`
+	Status string `json:"status,omitempty"`
+}
+
 type LicenseParam struct {
 	Address         string `json:"address,omitempty"`
 	Port            int    `json:"port,omitempty"`
@@ -197,6 +203,18 @@ type BigiqResults struct {
 	Host    string `json:"host,omitempty"`
 	Tenant  string `json:"tenant,omitempty"`
 	RunTime int64  `json:"runTime,omitempty"`
+}
+
+func (b *BigIQ) InitialActivation(license LicenseDetails) (map[string]interface{}, error) {
+	log.Printf("[INFO] %v license to BigIQ device:%v from BIGIQ", license.Status, b.Host)
+	resp, err := b.postReq(license, uriMgmt, uriCm, uriDevice, uriTasks, uriLicensing, uriPool, uriManagement)
+	if err != nil {
+		return nil, err
+	}
+	respRef := make(map[string]interface{})
+	_ = json.Unmarshal(resp, &respRef)
+	time.Sleep(5 * time.Second)
+	return respRef, nil
 }
 
 func (b *BigIQ) PostLicense(config *LicenseParam) (string, error) {
