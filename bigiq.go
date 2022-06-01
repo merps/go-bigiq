@@ -165,9 +165,9 @@ type regKeyAssignStatus struct {
 }
 
 type LicenseDetails struct {
-	RegKey string `json:"regKey,omitempty"`
-	Name   string `json:"name,omitempty"`
-	Status string `json:"status,omitempty"`
+	RegKey string `json:"regKey"`
+	Name   string `json:"name"`
+	Status string `json:"status"`
 }
 
 type LicenseParam struct {
@@ -205,20 +205,12 @@ type BigiqResults struct {
 	RunTime int64  `json:"runTime,omitempty"`
 }
 
-func (b *BigIQ) InitialActivation(license LicenseDetails) (map[string]interface{}, error) {
-	log.Printf("[INFO] %v license to BigIQ device:%v from BIGIQ", license.Status, b.Host)
-	resp, err := b.postReq(license, uriMgmt, uriCm, uriDevice, uriTasks, uriLicensing, uriPool, uriManagement)
-	if err != nil {
-		return nil, err
-	}
-	respRef := make(map[string]interface{})
-	_ = json.Unmarshal(resp, &respRef)
-	time.Sleep(5 * time.Second)
-	return respRef, nil
-}
+// func (b *BigIQ) InitialActivation() (map[string]interface{}, error) {
+//
+// }
 
 func (b *BigIQ) PostLicense(config *LicenseParam) (string, error) {
-	log.Printf("[INFO] %v license to BigIQ device:%v from BIGIQ", config.Command, config.Address)
+	log.Printf("[INFO] %v license to BigIP device:%v from BIGIQ", config.Command, config.Address)
 	resp, err := b.postReq(config, uriMgmt, uriCm, uriDevice, uriTasks, uriLicensing, uriPool, uriManagement)
 	if err != nil {
 		return "", err
@@ -229,6 +221,7 @@ func (b *BigIQ) PostLicense(config *LicenseParam) (string, error) {
 	time.Sleep(5 * time.Second)
 	return respID, nil
 }
+
 func (b *BigIQ) GetLicenseStatus(id string) (map[string]interface{}, error) {
 	licRes := make(map[string]interface{})
 	err, _ := b.getForEntity(&licRes, uriMgmt, uriCm, uriDevice, uriTasks, uriLicensing, uriPool, uriManagement, id)
@@ -262,6 +255,7 @@ func (b *BigIQ) GetDeviceLicenseStatus(path ...string) (string, error) {
 	//log.Printf(" Initial status response is :%s", licRes["status"])
 	return licRes["status"].(string), nil
 }
+
 func (b *BigIQ) GetRegPools() (*regKeyPools, error) {
 	var self regKeyPools
 	err, _ := b.getForEntity(&self, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses)
