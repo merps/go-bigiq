@@ -205,9 +205,32 @@ type BigiqResults struct {
 	RunTime int64  `json:"runTime,omitempty"`
 }
 
-// func (b *BigIQ) InitialActivation() (map[string]interface{}, error) {
-//
-// }
+func (b *BigIQ) InitialActivation(regkey, name, status string) (string, error) {
+	license := LicenseDetails{
+		RegKey: regkey,
+		Name:   name,
+		Status: status,
+	}
+	licResp, err := b.postReq(license, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation)
+	respRef := make(map[string]interface{})
+	_ = json.Unmarshal(licResp, &respRef)
+	if err != nil {
+		errMsg := respRef["message"].(string)
+		return errMsg, err
+	}
+	statusMsg := respRef["message"].(string)
+	time.Sleep(5 * time.Second)
+	return statusMsg, nil
+}
+
+func (b *BigIQ) RemoveActivation(regkey string) (string, error) {
+	licResp, err := b.deleteReq(uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
+	if err != nil {
+		return "dragons here", err
+	}
+	fmt.Println(licResp)
+	return "", nil
+}
 
 func (b *BigIQ) PostLicense(config *LicenseParam) (string, error) {
 	log.Printf("[INFO] %v license to BigIP device:%v from BIGIQ", config.Command, config.Address)

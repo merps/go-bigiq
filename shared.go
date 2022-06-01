@@ -13,12 +13,13 @@ import (
 )
 
 const (
-	uriShared       = "shared"
-	uriLicensing    = "licensing"
-	uriActivation   = "activation"
-	uriRegistration = "registration"
-	uriFileTransfer = "file-transfer"
-	uriUploads      = "uploads"
+	uriShared         = "shared"
+	uriLicensing      = "licensing"
+	uriActivation     = "activation"
+	uriInitActivation = "initial-activation"
+	uriRegistration   = "registration"
+	uriFileTransfer   = "file-transfer"
+	uriUploads        = "uploads"
 
 	activationComplete   = "LICENSING_COMPLETE"
 	activationInProgress = "LICENSING_ACTIVATION_IN_PROGRESS"
