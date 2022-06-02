@@ -223,6 +223,21 @@ func (b *BigIQ) InitialActivation(regkey, name, status string) (string, error) {
 	return statusMsg, nil
 }
 
+func (b *BigIQ) PollActivation(regkey string) (map[string]interface{}, error) {
+	respRef := make(map[string]interface{})
+	err, _ := b.getForEntity(&respRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
+	if err != nil {
+		return nil, err
+	}
+	pollStatus, ok := respRef["status"]
+	if ok {
+		pollStatus = pollStatus.(string)
+	} else {
+		return nil, fmt.Errorf("license status not available")
+	}
+	return respRef, nil
+}
+
 func (b *BigIQ) RemoveActivation(regkey string) (string, error) {
 	licResp, err := b.deleteReq(uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
 	if err != nil {

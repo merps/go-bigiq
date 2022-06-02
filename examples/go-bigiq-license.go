@@ -19,13 +19,13 @@ func main() {
 	//}
 
 	//Post License?
-	response, err := f5.InitialActivation("OTCCU-KKAYN-KZXPF-VXKAM-SQQZCFH", "thing", "ACTIVATING_AUTOMATIC")
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println("FU to that moon!!!")
-		return
-	}
-	fmt.Println(response)
+	//response, err := f5.InitialActivation("OTCCU-KKAYN-KZXPF-VXKAM-SQQZCFH", "thing", "ACTIVATING_AUTOMATIC")
+	//if err != nil {
+	//	fmt.Println(err)
+	//	fmt.Println("FU to that moon!!!")
+	//	return
+	//}
+	//fmt.Println(response)
 
 	//Removed failed activation
 	//response, err := f5.RemoveActivation("OTCCU-KKAYN-KZXPF-VXKAM-SQQZCFH")
@@ -34,4 +34,13 @@ func main() {
 	//	return
 	//}
 	//fmt.Println(response)
+
+	//Poll for status TODO: does this need json marshalling?
+	response, err := f5.PollActivation("OTCCU-KKAYN-KZXPF-VXKAM-SQQZCFH")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(response)
+
 }
