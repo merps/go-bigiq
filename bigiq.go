@@ -186,6 +186,11 @@ type LicenseParam struct {
 	User            string `json:"user,omitempty"`
 }
 
+type LicenseEula struct {
+	Status string `json:"status"`
+	Eula   string `json:"eulaText"`
+}
+
 type BigiqAs3AllTaskType struct {
 	Items []BigiqAs3TaskType `json:"items,omitempty"`
 }
@@ -236,6 +241,21 @@ func (b *BigIQ) PollActivation(regkey string) (map[string]interface{}, error) {
 		return nil, fmt.Errorf("license status not available")
 	}
 	return respRef, nil
+}
+
+func (b *BigIQ) AcceptEULA(regkey string) (string, error) {
+	respRef, err := b.PollActivation(regkey)
+	if err != nil {
+		return "", err
+	} else {
+		patchRef := LicenseEula{
+			Status: activationAutoEULA,
+			Eula:   respRef["eulaText"].(string),
+		}
+		eulaResp := b.patch(patchRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
+		el
+	}
+	return "", nil
 }
 
 func (b *BigIQ) RemoveActivation(regkey string) (string, error) {
