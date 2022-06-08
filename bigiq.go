@@ -243,19 +243,24 @@ func (b *BigIQ) PollActivation(regkey string) (map[string]interface{}, error) {
 	return respRef, nil
 }
 
-func (b *BigIQ) AcceptEULA(regkey string) (string, error) {
+func (b *BigIQ) AcceptEULA(regkey string) (map[string]interface{}, error) {
+	patchRef := make(map[string]interface{})
 	respRef, err := b.PollActivation(regkey)
 	if err != nil {
-		return "", err
+		return nil, err
 	} else {
 		patchRef := LicenseEula{
 			Status: activationAutoEULA,
 			Eula:   respRef["eulaText"].(string),
 		}
-		eulaResp := b.patch(patchRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
-		el
+		jsonPatch, _ := json.Marshal(patchRef)
+		fmt.Println(string(jsonPatch))
+		eulaResp := b.patch(jsonPatch, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
+		//respRef := make(map[string]interface{})
+		//_ = json.Unmarshal(eulaResp, &respRef)
+		fmt.Println(eulaResp)
 	}
-	return "", nil
+	return patchRef, nil
 }
 
 func (b *BigIQ) RemoveActivation(regkey string) (string, error) {
