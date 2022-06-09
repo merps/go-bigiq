@@ -243,23 +243,23 @@ func (b *BigIQ) PollActivation(regkey string) (map[string]interface{}, error) {
 	return respRef, nil
 }
 
-func (b *BigIQ) AcceptEULA(regkey string) (map[string]interface{}, error) {
-	patchRef := make(map[string]interface{})
+//TODO: add RegPool calls and what do I return? HTTPError and what else?
+func (b *BigIQ) AcceptEULA(regkey string) error {
+	// patchRef := make(map[string]interface{})
 	respRef, err := b.PollActivation(regkey)
 	if err != nil {
-		return nil, err
+		return err
 	} else {
 		patchRef := LicenseEula{
 			Status: activationAutoEULA,
 			Eula:   respRef["eulaText"].(string),
 		}
-		// TODO: why is it adding to top level rather than regpool and also failing auto?
 		eulaResp := b.patch(patchRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
 		//respRef := make(map[string]interface{})
 		//_ = json.Unmarshal(eulaResp, &respRef)
 		fmt.Println(eulaResp)
 	}
-	return patchRef, nil
+	return nil
 }
 
 func (b *BigIQ) RemoveActivation(regkey string) (string, error) {

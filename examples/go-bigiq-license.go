@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gitlab.wirelessravens.org/go-bigiq"
 )
 
@@ -18,7 +19,7 @@ func main() {
 	//}
 
 	//Post License?
-	//response, err := f5.InitialActivation("TTVUF-XUFWJ-CYUAX-WLKUB-BDWZAJL", "thing", "ACTIVATING_AUTOMATIC")
+	//response, err := f5.InitialActivation("BLORB-QLEYE-NAPDR-UWTZP-WBVHUBF", "thing", "ACTIVATING_AUTOMATIC")
 	//if err != nil {
 	//	fmt.Println(err)
 	//	fmt.Println("FU to that moon!!!")
@@ -36,19 +37,15 @@ func main() {
 	//}
 
 	//Poll for status TODO: does this need json marshalling?
-	//resRef, err := f5.PollActivation("TTVUF-XUFWJ-CYUAX-WLKUB-BDWZAJL")
+	//resRef, err := f5.PollActivation("BLORB-QLEYE-NAPDR-UWTZP-WBVHUBF")
 	//if err != nil {
 	//	fmt.Println(err)
 	//	return
 	//}
-	//fmt.Println(resRef["message"])
-
-	//fmt.Printf("License Status: %s\n", response)
-	//fmt.Println()
 	//TODO: need to capture and feedback EULA as patch operation,
 	//reference: https://clouddocs.f5.com/products/big-iq/mgmt-api/v8.1.0/HowToSamples/bigiq_public_api_wf/t_license_initial_activation.html
-	//fmt.Println(eula)
+	//fmt.Printf("License Status: %s\n", resRef["status"])
 
 	// Accept EULA hack
-	//fmt.Print(f5.AcceptEULA("TTVUF-XUFWJ-CYUAX-WLKUB-BDWZAJL"))
+	fmt.Print(f5.AcceptEULA("BLORB-QLEYE-NAPDR-UWTZP-WBVHUBF"))
 }
