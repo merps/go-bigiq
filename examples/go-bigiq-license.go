@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"gitlab.wirelessravens.org/go-bigiq"
 )
 
@@ -19,7 +18,7 @@ func main() {
 	//}
 
 	//Post License?
-	//response, err := f5.InitialActivation("OTCCU-KKAYN-KZXPF-VXKAM-SQQZCFH", "thing", "ACTIVATING_AUTOMATIC")
+	//response, err := f5.InitialActivation("TTVUF-XUFWJ-CYUAX-WLKUB-BDWZAJL", "thing", "ACTIVATING_AUTOMATIC")
 	//if err != nil {
 	//	fmt.Println(err)
 	//	fmt.Println("FU to that moon!!!")
@@ -32,17 +31,17 @@ func main() {
 	//if err != nil {
 	//	fmt.Println(err)
 	//	return
+	//} else {
+	//	fmt.Println(response)
 	//}
-	//fmt.Println(response)
 
 	//Poll for status TODO: does this need json marshalling?
-	//resRef, err := f5.PollActivation("OTCCU-KKAYN-KZXPF-VXKAM-SQQZCFH")
+	//resRef, err := f5.PollActivation("TTVUF-XUFWJ-CYUAX-WLKUB-BDWZAJL")
 	//if err != nil {
 	//	fmt.Println(err)
 	//	return
 	//}
-	//eula := resRef["eulaText"].(string)
-	//response := resRef["status"].(string)
+	//fmt.Println(resRef["message"])
 
 	//fmt.Printf("License Status: %s\n", response)
 	//fmt.Println()
@@ -51,5 +50,5 @@ func main() {
 	//fmt.Println(eula)
 
 	// Accept EULA hack
-	fmt.Print(f5.AcceptEULA("OTCCU-KKAYN-KZXPF-VXKAM-SQQZCFH"))
+	//fmt.Print(f5.AcceptEULA("TTVUF-XUFWJ-CYUAX-WLKUB-BDWZAJL"))
 }

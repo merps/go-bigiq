@@ -253,9 +253,8 @@ func (b *BigIQ) AcceptEULA(regkey string) (map[string]interface{}, error) {
 			Status: activationAutoEULA,
 			Eula:   respRef["eulaText"].(string),
 		}
-		jsonPatch, _ := json.Marshal(patchRef)
-		fmt.Println(string(jsonPatch))
-		eulaResp := b.patch(jsonPatch, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
+		// TODO: why is it adding to top level rather than regpool and also failing auto?
+		eulaResp := b.patch(patchRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
 		//respRef := make(map[string]interface{})
 		//_ = json.Unmarshal(eulaResp, &respRef)
 		fmt.Println(eulaResp)
