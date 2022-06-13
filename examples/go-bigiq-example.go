@@ -38,11 +38,11 @@ func main() {
 	}
 
 	//Get Licenses
-	licenses, err := f5.GetRegPools()
+	regpools, err := f5.GetRegPools()
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println(licenses)
+		fmt.Println(regpools)
 	}
 	// Create a VLAN
 	//f5.CreateVlan("vlan1138", 1138)

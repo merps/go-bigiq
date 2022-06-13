@@ -193,7 +193,7 @@ type LicenseEula struct {
 	Eula   string `json:"eulaText"`
 }
 
-type thing struct {
+type RegPool struct {
 	Description string `json:"description"`
 	Name        string `json:"name"`
 }
@@ -326,17 +326,40 @@ func (b *BigIQ) GetDeviceLicenseStatus(path ...string) (string, error) {
 }
 
 // TODO: need to return json/map for details of creation
-func (b *BigIQ) CreateRegPools(description, name string) (*regKeyPools, error) {
-	var self regKeyPools
-	that := thing{
+func (b *BigIQ) CreateRegPools(description, name string) (string, error) {
+	// var self regKeyPool
+	poolReq := RegPool{
 		Description: description,
 		Name:        name,
 	}
-	_, err := b.postReq(that, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses)
+	resp, err := b.postReq(poolReq, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return &self, nil
+	return string(resp), err
+}
+
+func (b *BigIQ) PatchRegPools(description, name string) error {
+	poolPatch := RegPool{
+		Description: description,
+		Name:        name,
+	}
+	poolID, err := b.GetRegkeyPoolId(name)
+	if err != nil {
+		return nil
+	} else {
+		return b.patch(poolPatch, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses, poolID)
+	}
+}
+
+func (b *BigIQ) ModifyRegPool(name, description string) error {
+	regkeyPool, _ := b.GetRegkeyPoolId(name)
+	fmt.Println(regkeyPool)
+	config := RegPool{
+		Name:        name,
+		Description: description,
+	}
+	return b.patch(config, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses, regkeyPool)
 }
 
 func (b *BigIQ) GetRegPools() (*regKeyPools, error) {
@@ -351,24 +374,6 @@ func (b *BigIQ) GetRegPools() (*regKeyPools, error) {
 func (b *BigIQ) GetPoolType(poolName string) (*regKeyPool, error) {
 	var self regKeyPools
 	err, _ := b.getForEntity(&self, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses)
-	if err != nil {
-		return nil, err
-	}
-	for _, pool := range self.RegKeyPoollist {
-		if pool.Name == poolName {
-			return &pool, nil
-		}
-	}
-	err, _ = b.getForEntity(&self, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriUtility, uriLicenses)
-	if err != nil {
-		return nil, err
-	}
-	for _, pool := range self.RegKeyPoollist {
-		if pool.Name == poolName {
-			return &pool, nil
-		}
-	}
-	err, _ = b.getForEntity(&self, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriPurchased, uriLicenses)
 	if err != nil {
 		return nil, err
 	}
