@@ -114,12 +114,14 @@ type regKeyPools struct {
 	//      Name     string `json:"name"`
 	//      SortName string `json:"sortName"`
 	//} `json:"items"`
-	RegKeyPoollist []regKeyPool `json:"items"`
+	RegKeyPoollist     []regKeyPool `json:"items"`
+	RegKeyPoolSelfLink string       `json:"selfLink"`
 }
 
 type regKeyPool struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
+	SelfLink string `json:"selfLink"`
 	SortName string `json:"sortName"`
 }
 

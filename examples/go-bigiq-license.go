@@ -11,12 +11,12 @@ func main() {
 	f5, _ := bigiq.NewTokenSession("10.0.90.253", "443", "admin", "zun.lull-PLEW7ar", "tmos", nil)
 
 	//Get Licenses
-	//licenses, err := f5.GetRegPools()
-	//if err != nil {
-	//	fmt.Println(err)
-	//} else {
-	//	fmt.Println(licenses)
-	//}
+	licenses, err := f5.GetRegPools()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(licenses)
+	}
 
 	//Post License?
 	//response, err := f5.InitialActivation("BLORB-QLEYE-NAPDR-UWTZP-WBVHUBF", "thing", "ACTIVATING_AUTOMATIC")
@@ -50,6 +50,8 @@ func main() {
 	//fmt.Print(f5.AcceptEULA("BLORB-QLEYE-NAPDR-UWTZP-WBVHUBF"))
 
 	// Create a regPool?
-	fmt.Println(f5.CreateRegPools("bite-me", "YA BUM!!!"))
+	//fmt.Println(f5.CreateRegPools("bite-me", "YA BUM!!!"))
+
+	// Get RegPools
 
 }
