@@ -47,5 +47,9 @@ func main() {
 	//fmt.Printf("License Status: %s\n", resRef["status"])
 
 	// Accept EULA hack
-	fmt.Print(f5.AcceptEULA("BLORB-QLEYE-NAPDR-UWTZP-WBVHUBF"))
+	//fmt.Print(f5.AcceptEULA("BLORB-QLEYE-NAPDR-UWTZP-WBVHUBF"))
+
+	// Create a regPool?
+	fmt.Println(f5.CreateRegPools("bite-me", "YA BUM!!!"))
+
 }

@@ -191,6 +191,11 @@ type LicenseEula struct {
 	Eula   string `json:"eulaText"`
 }
 
+type thing struct {
+	Description string `json:"description"`
+	Name        string `json:"name"`
+}
+
 type BigiqAs3AllTaskType struct {
 	Items []BigiqAs3TaskType `json:"items,omitempty"`
 }
@@ -243,7 +248,7 @@ func (b *BigIQ) PollActivation(regkey string) (map[string]interface{}, error) {
 	return respRef, nil
 }
 
-//TODO: add RegPool calls and what do I return? HTTPError and what else?
+// AcceptEULA TODO: add RegPool calls and what do I return? HTTPError and what else?
 func (b *BigIQ) AcceptEULA(regkey string) error {
 	// patchRef := make(map[string]interface{})
 	respRef, err := b.PollActivation(regkey)
@@ -316,6 +321,20 @@ func (b *BigIQ) GetDeviceLicenseStatus(path ...string) (string, error) {
 	}
 	//log.Printf(" Initial status response is :%s", licRes["status"])
 	return licRes["status"].(string), nil
+}
+
+// TODO: need to return json/map for details of creation
+func (b *BigIQ) CreateRegPools(description, name string) (*regKeyPools, error) {
+	var self regKeyPools
+	that := thing{
+		Description: description,
+		Name:        name,
+	}
+	_, err := b.postReq(that, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses)
+	if err != nil {
+		return nil, err
+	}
+	return &self, nil
 }
 
 func (b *BigIQ) GetRegPools() (*regKeyPools, error) {
