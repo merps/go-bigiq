@@ -326,7 +326,8 @@ func (b *BigIQ) GetDeviceLicenseStatus(path ...string) (string, error) {
 }
 
 // TODO: need to return json/map for details of creation
-func (b *BigIQ) CreateRegPools(description, name string) (string, error) {
+// TODO: additional - the PatchRegPools function just returns taskid
+func (b *BigIQ) CreateRegPool(description, name string) (string, error) {
 	// var self regKeyPool
 	poolReq := RegPool{
 		Description: description,
@@ -339,7 +340,7 @@ func (b *BigIQ) CreateRegPools(description, name string) (string, error) {
 	return string(resp), err
 }
 
-func (b *BigIQ) PatchRegPools(description, name string) error {
+func (b *BigIQ) PatchRegPool(description, name string) error {
 	poolPatch := RegPool{
 		Description: description,
 		Name:        name,
@@ -360,6 +361,15 @@ func (b *BigIQ) ModifyRegPool(name, description string) error {
 		Description: description,
 	}
 	return b.patch(config, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses, regkeyPool)
+}
+
+func (b *BigIQ) DeleteRegPool(name string) error {
+	poolId, err := b.GetRegkeyPoolId(name)
+	if err != nil {
+		return err
+	} else {
+		return b.delete(uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, poolId)
+	}
 }
 
 func (b *BigIQ) GetRegPools() (*regKeyPools, error) {
