@@ -368,7 +368,7 @@ func (b *BigIQ) DeleteRegPool(name string) error {
 	if err != nil {
 		return err
 	} else {
-		return b.delete(uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, poolId)
+		return b.delete(uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriRegkey, uriLicenses, poolId)
 	}
 }
 

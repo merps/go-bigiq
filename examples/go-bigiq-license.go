@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gitlab.wirelessravens.org/go-bigiq"
 )
 
@@ -63,5 +64,8 @@ func main() {
 
 	// PATCH to change the name or description of a RegKey pool
 	//fmt.Println(f5.ModifyRegPool("go-biq-lic", "modify-test-hack"))
+
+	// DELETE to remove a RegKey pool
+	fmt.Println(f5.DeleteRegPool("go-biq-lic"))
 
 }
