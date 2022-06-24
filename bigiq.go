@@ -226,12 +226,13 @@ func (b *BigIQ) InitialActivation(regkey, name, status string) (string, error) {
 	licResp, err := b.postReq(license, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation)
 	respRef := make(map[string]interface{})
 	_ = json.Unmarshal(licResp, &respRef)
+
 	if err != nil {
 		errMsg := respRef["message"].(string)
 		return errMsg, err
 	}
-	statusMsg := respRef["message"].(string)
 	time.Sleep(5 * time.Second)
+	statusMsg := respRef["message"].(string)
 	return statusMsg, nil
 }
 
@@ -267,6 +268,15 @@ func (b *BigIQ) AcceptEULA(regkey string) error {
 		fmt.Println(eulaResp)
 	}
 	return nil
+}
+
+func (b *BigIQ) RetryActivation(regkey string) (string, error) {
+	licResp, err := b.fastPatch(uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
+	if err != nil {
+		return "dragons here", err
+	}
+	fmt.Println(licResp)
+	return "", nil
 }
 
 func (b *BigIQ) RemoveActivation(regkey string) (string, error) {
@@ -411,9 +421,9 @@ func (b *BigIQ) GetDeviceId(deviceName string) (string, error) {
 		return "", err
 	}
 	for _, d := range self.DevicesInfo {
-		log.Printf("Address=%v,Hostname=%v,UUID=%v", d.Address, d.Hostname, d.UUID)
+		// log.Printf("Address=%v,Hostname=%v,UUID=%v", d.Address, d.Hostname, d.UUID)
 		if d.Address == deviceName || d.Hostname == deviceName || d.UUID == deviceName {
-			log.Printf("SelfLink Type=%T,SelfLink=%v", d.SelfLink, d.SelfLink)
+			// log.Printf("SelfLink Type=%T,SelfLink=%v", d.SelfLink, d.SelfLink)
 			return d.SelfLink, nil
 		}
 	}
