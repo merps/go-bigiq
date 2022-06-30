@@ -10,7 +10,8 @@
 [//]: # (See the License for the specific language governing permissions and limitations under the License.)
 
 ## go-bigiq
-[![GoDoc](https://godoc.org/github.com/merps/go-bigiq?status.svg)](https://godoc.org/github.com/merps/go-bigiq) [![Travis-CI](https://travis-ci.org/f5devcentral/go-bigiq.svg?branch=master)](https://travis-ci.com/merps/go-bigiq)
+[![GoDoc](https://godoc.org/github.com/merps/go-bigiq?status.svg)](https://godoc.org/github.com/merps/go-bigiq)
+[![Travis-CI](https://app.travis-ci.com/github/merps/go-bigiq?branch=master)](https://travis-ci.com/merps/go-bigiq)
 [![Go Report Card](https://goreportcard.com/badge/github.com/merps/go-bigiq)](https://goreportcard.com/report/github.com/merps/go-bigiq)
 [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/merps/go-bigiq/master/LICENSE)
 
