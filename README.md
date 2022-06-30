@@ -27,6 +27,9 @@ Some of the tasks you can do are as follows:
 ### Examples & Documentation
 Initial examples are located within `examples/` path
 
+### TODO
+- [ ] Upload of License file based on manual/ccn activation.
+- [ ] Addtional inline TODO's as per code.
 
 ### Contributors
 A very special thanks to the following who have helped contribute to earlier fork of this codebase.
