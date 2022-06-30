@@ -236,38 +236,48 @@ func (b *BigIQ) InitialActivation(regkey, name, status string) (string, error) {
 	return statusMsg, nil
 }
 
-func (b *BigIQ) PollActivation(regkey string) (map[string]interface{}, error) {
+func (b *BigIQ) PollActivation(regkey string) (string, error) {
 	respRef := make(map[string]interface{})
 	err, _ := b.getForEntity(&respRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	pollStatus, ok := respRef["status"]
 	if ok {
 		pollStatus = pollStatus.(string)
+		if pollStatus == activationManual {
+			log.Printf("[INFO] %v for REG-KEY: %s", activationManual, regkey)
+		} else {
+			return b.AcceptEULA(regkey)
+		}
 	} else {
-		return nil, fmt.Errorf("license status not available")
+		return "", fmt.Errorf("license status not available")
 	}
-	return respRef, nil
+	return pollStatus.(string), err
+}
+
+func (b *BigIQ) GetDossier(regkey string) (string, error) {
+	respRef := make(map[string]interface{})
+	err, _ := b.getForEntity(&respRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
+	if err != nil {
+		return "", nil
+	}
+	return respRef["dossier"].(string), nil
 }
 
 // AcceptEULA TODO: add RegPool calls and what do I return? HTTPError and what else?
-func (b *BigIQ) AcceptEULA(regkey string) error {
-	// patchRef := make(map[string]interface{})
-	respRef, err := b.PollActivation(regkey)
+func (b *BigIQ) AcceptEULA(regkey string) (string, error) {
+	respRef := make(map[string]interface{})
+	err, _ := b.getForEntity(&respRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
 	if err != nil {
-		return err
+		return "", err
 	} else {
 		patchRef := LicenseEula{
 			Status: activationAutoEULA,
 			Eula:   respRef["eulaText"].(string),
 		}
-		eulaResp := b.patch(patchRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
-		//respRef := make(map[string]interface{})
-		//_ = json.Unmarshal(eulaResp, &respRef)
-		fmt.Println(eulaResp)
+		return "", b.patch(patchRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
 	}
-	return nil
 }
 
 func (b *BigIQ) RetryActivation(regkey string) (string, error) {
@@ -284,8 +294,11 @@ func (b *BigIQ) RemoveActivation(regkey string) (string, error) {
 	if err != nil {
 		return "dragons here", err
 	}
-	fmt.Println(licResp)
-	return "", nil
+	respRef := make(map[string]interface{})
+	_ = json.Unmarshal(licResp, &respRef)
+	respID := respRef["id"].(string)
+	time.Sleep(5 * time.Second)
+	return respID, nil
 }
 
 func (b *BigIQ) PostLicense(config *LicenseParam) (string, error) {
@@ -338,7 +351,6 @@ func (b *BigIQ) GetDeviceLicenseStatus(path ...string) (string, error) {
 // TODO: need to return json/map for details of creation
 // TODO: additional - the PatchRegPools function just returns taskid
 func (b *BigIQ) CreateRegPool(description, name string) (string, error) {
-	// var self regKeyPool
 	poolReq := RegPool{
 		Description: description,
 		Name:        name,
@@ -678,7 +690,7 @@ func contains(slice []string, item string) bool {
 	return ok
 }
 
-// NewSession sets up our connection to the BIG-IP system.
+// NewSession sets up our connection to the BIG-IQ system.
 func NewSession(host, port, user, passwd string, configOptions *ConfigOptions) *BigIQ {
 	var url string
 	if !strings.HasPrefix(host, "http") {
@@ -705,7 +717,7 @@ func NewSession(host, port, user, passwd string, configOptions *ConfigOptions) *
 	}
 }
 
-// NewTokenSession sets up our connection to the BIG-IP system, and
+// NewTokenSession sets up our connection to the BIG-IQ system, and
 // instructs the session to use token authentication instead of Basic
 // Auth. This is required when using an external authentication
 // provider, such as Radius or Active Directory. loginProviderName is
@@ -767,7 +779,7 @@ func NewTokenSession(host, port, user, passwd, loginProviderName string, configO
 	return
 }
 
-// APICall is used to query the BIG-IP web API.
+// APICall is used to query the BIG-IQ web API.
 func (b *BigIQ) APICall(options *APIRequest) ([]byte, error) {
 	var req *http.Request
 	client := &http.Client{

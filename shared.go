@@ -26,6 +26,7 @@ const (
 	activationFailed     = "LICENSING_FAILED"
 	activationNeedEula   = "NEED_EULA_ACCEPT"
 	activationAutoEULA   = "ACTIVATING_AUTOMATIC_EULA_ACCEPTED"
+	activationManual     = "ACTIVATING_MANUAL_NEED_LICENSE_TEXT"
 )
 
 // Installs the given license.
