@@ -10,7 +10,7 @@
 [//]: # (See the License for the specific language governing permissions and limitations under the License.)
 
 ## go-bigiq
-[![GoDoc](https://godoc.org/github.com/merps/go-bigiq?status.svg)](https://godoc.org/github.com/merps/go-bigiq) [![Travis-CI](https://travis-ci.org/f5devcentral/go-bigiq.svg?branch=master)](https://travis-ci.org/f5devcentral/go-bigiq)
+[![GoDoc](https://godoc.org/github.com/merps/go-bigiq?status.svg)](https://godoc.org/github.com/merps/go-bigiq) [![Travis-CI](https://travis-ci.org/f5devcentral/go-bigiq.svg?branch=master)](https://travis-ci.org/merps/go-bigiq)
 [![Go Report Card](https://goreportcard.com/badge/github.com/merps/go-bigiq)](https://goreportcard.com/report/github.com/merps/go-bigiq)
 [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/merps/go-bigiq/master/LICENSE)
 
@@ -19,8 +19,8 @@ A Go package that interacts with F5 BIG-IQ systems using the REST API.
 Some of the tasks you can do are as follows:
 
 * connect and authorise (basic-auth or token)
-* license provisioning as per [**License Management**](https://clouddocs.f5.com/products/big-iq/mgmt-api/v0.0/HowToSamples/bigiq_public_api_wf/t_bigiq_public_api_workflows.html)]
-* Basic BIG-IQ device system queries [**Device Management**](https://clouddocs.f5.com/products/big-iq/mgmt-api/v0.0/HowToSamples/bigiq_public_api_wf/t_bigiq_public_api_workflows.html)
+* license provisioning as per [**License Management**](https://clouddocs.f5.com/products/big-iq/mgmt-api/v0.0/HowToSamples/bigiq_public_api_wf/t_bigiq_public_api_workflows.html)
+* basic BIG-IQ device system queries [**Device Management**](https://clouddocs.f5.com/products/big-iq/mgmt-api/v0.0/HowToSamples/bigiq_public_api_wf/t_bigiq_public_api_workflows.html)
 
 > **Note**: You must be on version 8.0+! 
 
@@ -29,7 +29,9 @@ Initial examples are located within `examples/` path
 
 ### TODO
 - [ ] Upload of License file based on manual/ccn activation.
-- [ ] Addtional inline TODO's as per code.
+- [ ] Additional inline TODO's as per code.
+- [ ] Validate AS3 Upload/Download
+- [ ] Correct GoPkg endpoint
 
 ### Contributors
 A very special thanks to the following who have helped contribute to earlier fork of this codebase.
