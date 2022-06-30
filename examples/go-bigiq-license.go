@@ -8,10 +8,10 @@ import (
 func main() {
 	// Connect to the BIQ-IP system. Enabled basic auth in BIQ - https://support.f5.com/csp/article/K43725273
 	// Correct by adding unknown type var - really!?
-	f5, _ := bigiq.NewTokenSession("10.0.90.253", "443", "admin", "zun.lull-PLEW7ar", "tmos", nil)
+	f5, _ := bigiq.NewTokenSession("10.0.90.254", "443", "admin", "SuperSecret", "tmos", nil)
 
 	// Licensing Initial Activation API - 1. Start activation of a license (Automatic)
-	//response, err := f5.InitialActivation("YXOTQ-CBEPS-HOXDI-LXFXZ-FDVHUMS", "this-is-auto", "ACTIVATING_AUTOMATIC")
+	//response, err := f5.InitialActivation("xxxxx-xxxxx-xxxxx-xxxxx-xxxxx", "this-is-auto", "ACTIVATING_AUTOMATIC")
 	//if err != nil {
 	//	fmt.Println(err)
 	//	return
@@ -19,7 +19,7 @@ func main() {
 	//fmt.Println(response)
 
 	// Licensing Initial Activation API - 1. Start activation of a license (Manual)
-	//response, err := f5.InitialActivation("YXOTQ-CBEPS-HOXDI-LXFXZ-FDVHUMS", "this, this is manual", "ACTIVATING_MANUAL")
+	//response, err := f5.InitialActivation("xxxxx-xxxxx-xxxxx-xxxxx-xxxxx", "this, this is manual", "ACTIVATING_MANUAL")
 	//if err != nil {
 	//	fmt.Println(err)
 	//	return
@@ -27,9 +27,9 @@ func main() {
 	//fmt.Println(response)
 
 	// Licensing Initial Activation API - 2. Poll to get status
-	fmt.Println(f5.PollActivation("YXOTQ-CBEPS-HOXDI-LXFXZ-FDVHUMS"))
+	fmt.Println(f5.PollActivation("xxxxx-xxxxx-xxxxx-xxxxx-xxxxx"))
 	// TODO: does this need json marshalling for output?
-	//resp, err := f5.PollActivation("YXOTQ-CBEPS-HOXDI-LXFXZ-FDVHUMS")
+	//resp, err := f5.PollActivation("xxxxx-xxxxx-xxxxx-xxxxx-xxxxx")
 	//if err != nil {
 	//	fmt.Println(err)
 	//	return
@@ -40,14 +40,14 @@ func main() {
 
 	// Licensing Initial Activation API - 3. Complete automatic activation by accepting the EULA
 	// TODO: ugly hack - as PollStatus what's best output?
-	//fmt.Print(f5.AcceptEULA("BLORB-QLEYE-NAPDR-UWTZP-WBVHUBF"))
+	//fmt.Print(f5.AcceptEULA("xxxxx-xxxxx-xxxxx-xxxxx-xxxxx"))
 
 	// Licensing Initial Activation API - 4. Complete manual activation by providing license text
 	// TODO: magic, all the magic!  PostReqBody
 	//fmt.Print("DO MAGIC!!!!"))
 
 	//Licensing Initial Activation API - 5. Retry Failed Activation
-	//response, err := f5.RemoveActivation("BLORB-QLEYE-NAPDR-UWTZP-WBVHUBF")
+	//response, err := f5.RemoveActivation("xxxxx-xxxxx-xxxxx-xxxxx-xxxxx")
 	//if err != nil {
 	//	fmt.Println(err)
 	//	return
@@ -56,7 +56,7 @@ func main() {
 	//}
 
 	//Licensing Initial Activation API - 6. Remove a failed activation
-	//response, err := f5.RemoveActivation("YXOTQ-CBEPS-HOXDI-LXFXZ-FDVHUMS")
+	//response, err := f5.RemoveActivation("xxxxx-xxxxx-xxxxx-xxxxx-xxxxx")
 	//if err != nil {
 	//	fmt.Println(err)
 	//	return
@@ -91,5 +91,5 @@ func main() {
 	//fmt.Println(f5.DeleteRegPool("lab-eval"))
 
 	// POST hack for getDossier
-	// fmt.Println(f5.GetDossier("YXOTQ-CBEPS-HOXDI-LXFXZ-FDVHUMS"))
+	// fmt.Println(f5.GetDossier("xxxxx-xxxxx-xxxxx-xxxxx-xxxxx"))
 }
