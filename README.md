@@ -32,6 +32,7 @@ Initial examples are located within `examples/` path
 - [ ] Additional inline TODO's as per code.
 - [ ] Validate AS3 Upload/Download
 - [ ] Correct GoPkg endpoint
+- [ ] TaskId or Softlink output (Poll, Dossier, etc)
 
 ### Contributors
 A very special thanks to the following who have helped contribute to earlier fork of this codebase.
