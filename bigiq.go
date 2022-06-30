@@ -236,6 +236,7 @@ func (b *BigIQ) InitialActivation(regkey, name, status string) (string, error) {
 	return statusMsg, nil
 }
 
+// TODO: does this need TaskId or SoftLink?
 func (b *BigIQ) PollActivation(regkey string) (string, error) {
 	respRef := make(map[string]interface{})
 	err, _ := b.getForEntity(&respRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
@@ -256,6 +257,7 @@ func (b *BigIQ) PollActivation(regkey string) (string, error) {
 	return pollStatus.(string), err
 }
 
+// TODO: does this need TaskId?
 func (b *BigIQ) GetDossier(regkey string) (string, error) {
 	respRef := make(map[string]interface{})
 	err, _ := b.getForEntity(&respRef, uriMgmt, uriCm, uriDevice, uriLicensing, uriPool, uriInitActivation, regkey)
