@@ -11,7 +11,7 @@
 
 ## go-bigiq
 [![GoDoc](https://godoc.org/github.com/merps/go-bigiq?status.svg)](https://godoc.org/github.com/merps/go-bigiq)
-[![Travis-CI](https://app.travis-ci.com/github/merps/go-bigiq?branch=master)](https://travis-ci.com/merps/go-bigiq)
+[![Travis-CI](https://travis-ci.com/merps/go-bigiq.svg?branch=master)](https://travis-ci.com/merps/go-bigiq)
 [![Go Report Card](https://goreportcard.com/badge/github.com/merps/go-bigiq)](https://goreportcard.com/report/github.com/merps/go-bigiq)
 [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/merps/go-bigiq/master/LICENSE)
 
