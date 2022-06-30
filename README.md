@@ -18,19 +18,24 @@ A Go package that interacts with F5 BIG-IQ systems using the REST API.
 
 Some of the tasks you can do are as follows:
 
-* connect and authorise (gotta start somewhere)
+* connect and authorise (basic-auth or token)
+* license provisioning as per [**License Management**](https://clouddocs.f5.com/products/big-iq/mgmt-api/v0.0/HowToSamples/bigiq_public_api_wf/t_bigiq_public_api_workflows.html)]
+* Basic BIG-IQ device system queries [**Device Management**](https://clouddocs.f5.com/products/big-iq/mgmt-api/v0.0/HowToSamples/bigiq_public_api_wf/t_bigiq_public_api_workflows.html)
 
 > **Note**: You must be on version 8.0+! 
 
 ### Examples & Documentation
-Visit the [GoDoc][godoc-go-bigiq] page for package documentation and examples. (TODO - learning)
+Initial examples are located within `examples/` path
 
 
 ### Contributors
-A very special thanks to the following who have helped contribute to this software, especially:
+A very special thanks to the following who have helped contribute to earlier fork of this codebase.
 
 * [Adam Burnett](https://github.com/aburnett)
 * [Michael D. Ivey](https://github.com/ivey)
+* [Scott Ware](https://github.com/scottdware/go-bigip)
+
+And F5 A&O Ecosystems
 
 [godoc-go-bigiq]: http://godoc.org/github.com/merps/go-bigiq
 [license]: https://github.com/merps/go-bigiq/blob/master/LICENSE
