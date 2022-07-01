@@ -92,4 +92,34 @@ func main() {
 
 	// POST hack for getDossier
 	// fmt.Println(f5.GetDossier("xxxxx-xxxxx-xxxxx-xxxxx-xxxxx"))
+
+	// Get devices listed
+	devices, err := f5.GetDevices()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// iteration through the devices
+	for _, devices := range devices {
+		fmt.Println(devices)
+	}
+
+	// Get SysLog servers
+	//logsrvs, err := f5.Syslogs()
+	//if err != nil {
+	//	fmt.Println(err)
+	//} else {
+	//	fmt.Println(logsrvs)
+	//}
+
+	// Get Interfaces
+	//interfaces, err := f5.Interfaces()
+	//if err != nil {
+	//	fmt.Println(err)
+	//} else {
+	//	fmt.Println(interfaces)
+	//}
+
+	// GetDeviceID
+	//fmt.Println(f5.GetDeviceId("bigip2"))
 }
