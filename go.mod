@@ -1,4 +1,4 @@
-module gitlab.wirelessravens.org/go-bigiq
+module github.com/merps/go-bigiq
 
 go 1.18
 
